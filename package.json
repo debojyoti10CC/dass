@@ -1,0 +1,17 @@
+{
+  "name": "distribution-markets-arc",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "web"
+  ],
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "npm run dev --workspace web",
+    "build": "npm run build --workspace web",
+    "check": "npm run check --workspace web",
+    "preview": "npm run preview --workspace web"
+  }
+}
