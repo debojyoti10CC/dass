@@ -82,6 +82,8 @@ Set claim flags and decrement liability before token transfers, under reentrancy
 
 ## Reads, events, and recovery
 
+Public-testnet wallet funding uses a native dialog in the header. It copies only the connected public address and links to Circle's official faucet; CAPTCHA and token requests happen on Circle's page. The panel reads native USDC through the existing public client, bounds refresh time, and invalidates results on account changes or close. It never signs or assumes a faucet request succeeded. No funding backend or browser API key is required. Mainnet and local deployments omit this action.
+
 Expose enough getters for market details, receipts, and claim previews. Events carry IDs, owner, nonce, and curve/deposit details sufficient to reconstruct discovery and history. Paginate log queries from the deployment block and deduplicate by transaction hash/log index. Re-read records before displaying actionable claims.
 
 Cache public records locally; cache is disposable. Browser local storage may retain transaction hash, chain ID, wallet, and intended action for reconciliation, never private keys. “Unknown” transactions must be checked by hash and contract events before another submission is suggested.

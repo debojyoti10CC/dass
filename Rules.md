@@ -66,6 +66,8 @@ No minimum-collateral optimization ships without a reviewed global loss bound. A
 
 Show fixed collateral, settlement timing, resolver trust, and gas separately. Label forecast density, range probability, P&L, and payout correctly. Do not equate deposit with price, maximum loss estimate with guaranteed realized loss, or uncertainty with position size.
 
+Offer the official faucet only for public Arc Testnet. Explain that shared test USDC covers gas and collateral; copy the current connected address and read the actual balance after funding. Do not imply that opening a faucet funded a wallet, bypass provider CAPTCHA/limits, or offer testnet funds as mainnet funds.
+
 A stale market requires a fresh preview and another trade action. Never silently submit a materially changed payoff. Provide numeric controls, keyboard operation, visible focus, readable labels, and text alternatives to color. Keep a chart-independent claim path.
 
 Show committed rules only after their hash matches. Metadata failure must not disable contract-based claims or refunds. Unknown transaction state must not become a generic retry button.

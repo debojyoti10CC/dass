@@ -31,7 +31,7 @@ Start with a short-lived numeric observation market, such as a specified weather
 
 | ID | Requirement | Acceptance condition |
 | --- | --- | --- |
-| P01 | Wallet and network onboarding | Users can connect, switch to Arc Testnet, open the faucet, and see deposit plus fee requirements. |
+| P01 | Wallet and network onboarding | Users can connect, switch to Arc Testnet, copy the connected address, open Circle's official faucet, refresh the live test USDC balance, and see deposit plus fee requirements. The funding action is limited to public testnet. |
 | P02 | Market discovery | Users can inspect question, status, expected outcome, uncertainty, and close time without connecting. |
 | P03 | Rules inspection | Source, timestamps, units, resolver, evidence policy, and cancellation deadline are visible before trading. |
 | P04 | Forecast editor | Mean and standard deviation have numeric inputs and keyboard-operable sliders with validated bounds. |

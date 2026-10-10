@@ -21,6 +21,7 @@ small, .fine-print { font-size: 14px; line-height: 1.5; color: var(--body); }
 code { font-size: 14px; overflow-wrap: anywhere; }
 .skip-link { position: fixed; top: -80px; left: 16px; background: #fff; padding: 16px; border: 2px solid var(--blue); z-index: 10; }
 .skip-link:focus { top: 10px; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
 .topbar { border-bottom: 1px solid var(--hairline); background: #fff; }
 .nav-shell { max-width: 1360px; margin: auto; min-height: 80px; padding: 16px 40px; display: flex; align-items: center; gap: 48px; }
 .wordmark { display: flex; align-items: center; gap: 10px; background: none; padding: 0; font-size: 23px; letter-spacing: -.7px; font-weight: 650; white-space: nowrap; }
@@ -31,6 +32,27 @@ nav button { position: relative; padding: 10px 0; background: transparent; font-
 nav button[aria-current=page] { color: var(--ink); }
 nav button[aria-current=page]::after { content: ''; position: absolute; bottom: -17px; height: 3px; border-radius: 3px; background: var(--blue); width: 100%; left: 0; }
 .wallet-controls { margin-left: auto; display: flex; align-items: center; gap: 16px; }
+.fund-wallet-button { white-space: nowrap; }
+.funding-dialog { color: var(--ink); border: 1px solid var(--hairline); border-radius: 24px; padding: 32px; width: min(500px, calc(100% - 32px)); max-height: calc(100dvh - 32px); overflow-y: auto; }
+.funding-dialog::backdrop { background: rgb(10 11 13 / 45%); }
+.funding-heading { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.funding-close { width: 44px; height: 44px; border-radius: 50%; background: var(--strong); font-size: 26px; }
+.funding-dialog h2 { font-size: 32px; font-weight: 400; letter-spacing: -.8px; }
+.funding-balance { display: grid; gap: 8px; background: var(--soft); padding: 20px; border-radius: 16px; margin-bottom: 24px; }
+.funding-balance > span { color: var(--body); font-size: 14px; }
+.funding-balance > strong { font-size: 28px; font-weight: 500; overflow-wrap: anywhere; }
+.funding-address { display: grid; gap: 10px; font-size: 14px; font-weight: 600; }
+.funding-address input { width: 100%; min-width: 0; font-family: ui-monospace, monospace; font-size: 14px; font-weight: 400; }
+.funding-steps { padding-left: 22px; margin: 20px 0 24px; color: var(--body); font-size: 14px; line-height: 1.6; }
+.funding-steps li + li { margin-top: 10px; }
+.funding-steps strong { color: var(--ink); }
+.funding-faucet:hover { text-decoration: none; }
+.funding-refresh { margin-top: 12px; }
+.funding-connect { margin: 24px 0; padding: 20px; border-radius: 16px; background: var(--soft); }
+.funding-connect p { font-size: 14px; }
+.funding-connect .inline-error { margin: 16px 0 0; }
+.funding-status { margin: 16px 0 0; font-size: 14px; color: var(--body); }
+.funding-limit { margin-top: 24px; }
 .network-badge { font-size: 13px; white-space: nowrap; color: var(--body); display: inline-flex; gap: 7px; align-items: center; }
 .network-dot { height: 7px; width: 7px; border-radius: 50%; background: var(--ink); }
 .primary, .secondary { border-radius: 100px; padding: 13px 22px; font-size: 14px; line-height: 1.2; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; gap: 12px; min-height: 48px; }
@@ -283,6 +305,7 @@ footer a { margin-left: auto; font-size: 12px; white-space: nowrap; }
 @media (max-width: 800px) {
   .nav-shell { flex-wrap: wrap; gap: 0 16px; min-height: 112px; padding-bottom: 0; } .wordmark { font-size: 24px; }
   .wallet-controls { margin-left: auto; } .wallet-button { padding: 12px 16px; min-height: 44px; }
+  .wallet-controls { gap: 8px; } .fund-wallet-button { padding: 12px 16px; min-height: 44px; }
   nav { order: 3; width: 100%; justify-content: flex-start; gap: 32px; padding-top: 14px; } nav button { padding: 14px 0; } nav button[aria-current=page]::after { bottom: 0; }
   .environment-note { flex-wrap: wrap; gap: 10px; padding: 16px 0; } .environment-note > span:nth-child(2) { width: 100%; order: 3; } .environment-note a { font-size: 12px; }
   .page-heading { padding: 40px 0 32px; align-items: flex-start; } .forecast-heading { display: block; } .forecast-heading .badge { margin-top: 24px; }
@@ -298,6 +321,7 @@ footer a { margin-left: auto; font-size: 12px; white-space: nowrap; }
   .transaction-row { grid-template-columns: 1.5fr 1fr 1fr; gap: 16px; } .transaction-row > .muted { grid-column: 1 / -1; font-size: 12px; }
 }
 @media (max-width: 540px) {
+  .wallet-controls { width: 100%; justify-content: space-between; margin: 12px 0 0; } .fund-wallet-button { font-size: 12px; } .funding-dialog { padding: 24px; }
   main { padding: 0 16px 40px; } .nav-shell { padding: 16px 16px 0; } .nav-shell .wordmark { font-size: 18px; gap: 8px; } .wallet-button { font-size: 12px; padding: 12px 14px; }
   .discovery-hero { grid-template-columns: 1fr; gap: 32px; } .hero-copy h1 { font-size: 44px; } .hero-copy .intro { font-size: 15px; max-width: 340px; } .hero-actions .primary { padding: 13px 22px; font-size: 14px; } .hero-visual { display: none; }
   .market-grid { grid-template-columns: 1fr; gap: 16px; } .market-card { padding: 22px; } .market-card-title { min-height: 0; } .market-preview { margin-top: 12px; } .market-card-forecast strong { font-size: 25px; }

@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-10-10T03:49:10.825Z",
+  "checkedAt": "2026-10-10T09:28:12.040Z",
   "testnetPrerequisitesPassed": true,
   "contract": "0xc613bca497257cfec8d1754e1d81136cb9862ca8",
   "chainId": 5042002,
@@ -13,9 +13,9 @@
     "deployments/arc-testnet-acceptance-evidence.json": "bbbc79b041aeaf3e51de0bf826476d6b472eed8e3097d6371c0a7ef125d033ac",
     "deployments/arc-testnet-resolution-evidence.json": "0e9479310401e4b80265d23b32b0de5b8c70285b9a557b46c4ebe6bf86c04e7e",
     "deployments/arc-testnet-expiry-evidence.json": "3ee33541c80cd2127f2f5db9f32ccf7115ecf74da10bf388d97d22620fd10774",
-    "deployments/arc-testnet-browser-evidence.json": "cca5deebf7544f5777fb12a8bfc842677235c6d90e22b22cd499197f6ddd6fe0",
-    "deployments/arc-testnet-build-evidence.json": "5b863fc2c8e85b55f9fbd6c17d3d2ab73c85eba2c58c3709ace6b9df9a5a4c45",
-    "deployments/arc-testnet-review-evidence.json": "1e0563d312e31dc7eae5affb8816af86d1823910e1e838c8d7e0f53de07af6b5",
+    "deployments/arc-testnet-browser-evidence.json": "d2a9e413ce0aa51ded643db93687a3bb3148a8baf7718f28e4f2212339094780",
+    "deployments/arc-testnet-build-evidence.json": "e04b8526ece9bc662ddf280adf75b9b40aa8c774edb5a667caa24af0f1568253",
+    "deployments/arc-testnet-review-evidence.json": "c5d6073cbcb3c0274a25a8e19d74ac11e935f090eead4356e9cb28ef72eba82f",
     "deployments/arc-testnet-rpc-evidence.json": "f1eef8d0b776156c3c552645d70ef6f9e39cd37f01b1f9f5bb9d834744450f91"
   },
   "independentAudit": false,

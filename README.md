@@ -4,6 +4,8 @@ DAZZ Markets is an end-to-end implementation of the continuous Gaussian distribu
 
 Public contract: [0xc613bca497257cfec8d1754e1d81136cb9862ca8](https://explorer.testnet.arc.io/address/0xc613bca497257cfec8d1754e1d81136cb9862ca8?tab=contract). Real markets cover Premier League total goals and an exact Coinbase BTC/USD candle. Run `npm ci` and `npm run dev` to use this deployment with your own injected EVM wallet. The app never holds wallet private keys.
 
+Choose **Fund test wallet** in the header, connect your wallet, copy its address, and open [Circle's official faucet](https://faucet.circle.com/). Select USDC and Arc Testnet, paste the address, and submit on Circle's page. Return to the panel and refresh the live balance. Test USDC pays both collateral and gas. The public-testnet funding action is hidden on mainnet and localhost. Circle currently supplies 20 test USDC every two hours per address/network; its CAPTCHA and limits apply.
+
 The DAZZ interface includes searchable market cards, sports/crypto and settlement-status filters, onchain summary metrics, paired probability-density and P&L charts, keyboard-accessible controls, scenario inspection, positions, sponsor recovery, an operator flow, exact approvals, simulated/staleness-checked transactions, and hash reconciliation. It reads deployed records from Arc. Local demonstration markets are labeled synthetic. The Coinbase style imported from `coinbase/DESIGN.md` is active; the app does not bundle licensed Coinbase fonts or wordmarks.
 
 ## Run the complete local Arc demonstration
