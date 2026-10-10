@@ -1,9 +1,12 @@
 {
-  "checkedAt": "2026-10-10T01:31:47.394Z",
+  "checkedAt": "2026-10-10T03:48:09.851Z",
   "chainId": 5042002,
   "contract": "0xc613bca497257cfec8d1754e1d81136cb9862ca8",
   "productionBuild": true,
   "checks": [
+    "DAZZ Markets branding",
+    "Category/status filtering and keyword search with empty-state recovery",
+    "Mobile market discovery without overflow",
     "Actual public RPC market discovery",
     "Three real-event markets plus explicit expiry recovery exercise",
     "Self-contained committed rules verified",

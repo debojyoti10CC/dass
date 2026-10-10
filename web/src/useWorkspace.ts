@@ -41,7 +41,13 @@ export function useWorkspace() {
     }
   }, [account])
 
-  useEffect(() => { void refresh(); const timer = setInterval(() => void refresh(), 15000); return () => clearInterval(timer) }, [refresh])
+  useEffect(() => {
+    void refresh()
+    const visibleRefresh = () => { if (!document.hidden) void refresh() }
+    const timer = setInterval(visibleRefresh, 15000)
+    document.addEventListener('visibilitychange', visibleRefresh)
+    return () => { clearInterval(timer); document.removeEventListener('visibilitychange', visibleRefresh) }
+  }, [refresh])
   useEffect(() => {
     const provider = walletProvider()
     if (!provider) return
@@ -58,7 +64,7 @@ export function useWorkspace() {
     const next = await Promise.all(current.map(item => ['pending', 'unknown'].includes(item.state) ? reconcileTransaction(item) : item))
     updateTransactions(next); await refresh()
   }, [refresh, updateTransactions])
-  useEffect(() => { void reconcile() }, [reconcile])
+  useEffect(() => { if (transactionRef.current.some(item => ['pending', 'unknown'].includes(item.state))) void reconcile() }, [reconcile])
   useEffect(() => {
     if (!transactions.some(item => ['pending', 'unknown'].includes(item.state) && item.chainId === chain.id)) return
     const timer = setInterval(() => void reconcile(), 12000)

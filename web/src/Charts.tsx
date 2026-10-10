@@ -23,6 +23,7 @@ export function Charts({ market, proposed, scenario, setScenario }: { market: Ma
       setScenario(Math.max(low, Math.min(high, low + (local - left) / (width - left - right) * (high - low))))
     }}>
       <title id={`${id}-${isPnL ? 'pnl' : 'density'}`}>{isPnL ? `Illustrative receipt P&L. At outcome ${scenario.toFixed(2)}, ${signed(pnl)} USDC.` : `Probability density. Current mean ${fromWad(old.mean)} and uncertainty ${fromWad(old.sigma)}. Proposed mean ${fromWad(proposed.mean)} and uncertainty ${fromWad(proposed.sigma)}.`}</title>
+      {!isPnL && <path d={`${draw(value => density(proposed, value), y)} L${x(high)},${y(0)} L${x(low)},${y(0)} Z`} className="density-area" />}
       {yTicks.map(value => <g key={value}><line x1={left} x2={width - right} y1={y(value)} y2={y(value)} className={value === 0 && isPnL ? 'zero-line' : 'grid-line'} /><text x={left - 12} y={y(value) + 5} textAnchor="end">{isPnL ? `${value > 0 ? '+' : ''}${value.toFixed(0)}` : value.toFixed(3)}</text></g>)}
       {Array.from({ length: 5 }, (_, index) => low + (high - low) * index / 4).map(value => <g key={value}><line x1={x(value)} x2={x(value)} y1={top} y2={height - bottom} className="grid-line vertical" /><text x={x(value)} y={height - bottom + 24} textAnchor="middle">{value.toFixed(1)}</text></g>)}
       {isPnL ? <path d={draw(value => previewPnL(market, proposed, value), y)} className="pnl-line" /> : <><path d={draw(value => density(old, value), y)} className="current-line" /><path d={draw(value => density(proposed, value), y)} className="proposed-line" /></>}

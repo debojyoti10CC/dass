@@ -36,7 +36,7 @@ The optional `npm run demo` remains a separate synthetic localhost fixture for d
 
 ## Phase 6 — mainnet: testnet prerequisites complete; funding and publication pending
 
-The user requests mainnet after full testnet testing and security checks for Arc Microgrants, which excludes testnet-only builds. Do not imply that automated scans or an in-house review are an independent audit. Record completed testnet gates before mainnet, estimate real fees, supply actual Arc mainnet USDC, deploy/verify the principal application contract, create new future real-event markets, and publish a working frontend/public source. The current GitHub connection cannot push this repository. Mainnet is not deployed and no program application has been submitted.
+The user requests mainnet after full testnet testing and security checks for Arc Microgrants, which excludes testnet-only builds. Do not imply that automated scans or an in-house review are an independent audit. Record completed testnet gates before mainnet, estimate real fees, supply actual Arc mainnet USDC, deploy/verify the principal application contract, create new future real-event markets, and publish a working frontend/public source. Public source is published at https://github.com/debojyoti10CC/dass; the private review hosting still needs an accessible public mainnet release. Mainnet is not deployed and no program application has been submitted.
 
 ## Commands to reproduce local gates
 
@@ -53,3 +53,7 @@ npm run test:browser
 ```
 
 Run the local Arc node before `npm test`. `npm run demo` starts the local chain, seeds two synthetic fixture markets, and opens the local-only app. With the demo running, `npm run test:browser` exercises the browser flow. Keep public testnet transactions and signers separate from localhost test accounts.
+
+## DAZZ interface and forecast preparation recovery
+
+DAZZ Markets adds searchable category/status-filtered cards, onchain summary metrics, responsive branding, a favicon and a clearer detail hierarchy. Public production browser checks cover actual market records, rules, source/transaction links, search/filter empty-state recovery and mobile discovery/detail without overflow. Review timeout regressions cover unresponsive reads, rejection preservation, late-result rejection and a fresh successful simulation afterward. The browser recovery uses a test-only wallet read adapter that cannot sign/broadcast, with actual Arc RPC balances/simulation/fees; it is separate from real wallet transaction evidence. See deployments/arc-testnet-review-evidence.json.

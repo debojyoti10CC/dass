@@ -1,5 +1,5 @@
 import {
-  createPublicClient, createWalletClient, custom, defineChain, erc20Abi, http,
+  createPublicClient, createWalletClient, custom, defineChain, erc20Abi, fallback, http,
   isAddress, formatUnits, type Abi, type Address, type EIP1193Provider, type Hash, type WriteContractParameters,
 } from 'viem'
 import { deployment, distributionMarketsAbi } from './contracts'
@@ -12,7 +12,32 @@ export const chain = defineChain({
   rpcUrls: { default: { http: [deployment.rpcUrl] } },
   blockExplorers: { default: { name: 'Explorer', url: deployment.explorerUrl } },
 })
-export const publicClient = createPublicClient({ chain, transport: http(deployment.rpcUrl), pollingInterval: 4000 })
+// Pace reads and retry explicit public-RPC throttling. This transport never signs transactions.
+const rpcTransport: ReturnType<typeof fallback> = options => {
+  // Circle's arc-node guide lists this endpoint; chain ID, deployed bytecode and logs are verified in evidence.
+  const secondary = chain.id === 5042002 && String(deployment.status) === 'deployed' ? [http('https://rpc.blockdaemon.testnet.arc.io', { timeout: 8000, retryCount: 0 })] : []
+  const transport = fallback([http(deployment.rpcUrl, { timeout: 8000, retryCount: 0 }), ...secondary], { retryCount: 0 })(options)
+  let queue: Promise<unknown> = Promise.resolve(), nextRequest = 0
+  return { ...transport, request: ((request: Parameters<typeof transport.request>[0]) => {
+    const task = queue.then(async () => {
+      for (let attempt = 0; ; attempt++) {
+        const wait = nextRequest - Date.now()
+        if (wait > 0) await new Promise(resolve => setTimeout(resolve, wait))
+        nextRequest = Date.now() + 350
+        try { return await transport.request(request) }
+        catch (failure) {
+          const error = failure as { code?: number; status?: number; message?: string; cause?: { code?: number; status?: number } }
+          const limited = error.code === -32005 || error.cause?.code === -32005 || error.status === 429 || error.cause?.status === 429 || /rate limit|exceeds defined limit/i.test(error.message ?? '')
+          if (!limited || attempt >= 2) throw failure
+          await new Promise(resolve => setTimeout(resolve, 1000 * 2 ** attempt))
+        }
+      }
+    })
+    queue = task.catch(() => {})
+    return task
+  }) as typeof transport.request }
+}
+export const publicClient = createPublicClient({ chain, transport: rpcTransport, pollingInterval: 4000 })
 export const contractAddress = deployment.address && isAddress(deployment.address) ? deployment.address as Address : undefined
 export const tokenAddress = deployment.tokenAddress as Address
 const abi: Abi = distributionMarketsAbi
@@ -73,23 +98,38 @@ export async function readMarket(id: bigint, blockNumber?: bigint): Promise<Mark
   }
 }
 
-/** Scan dapp events in bounded windows and deduplicate by transaction/log identity. */
+type EventRecord = { args: Record<string, unknown>; transactionHash: Hash; logIndex: number; blockNumber: bigint }
+const eventHistory = new Map<string, { next: bigint; records: Map<string, EventRecord>; running?: Promise<void> }>()
+/** Scan each confirmed range once; share concurrent scans and advance only after successful reads. */
 async function eventLogs(eventName: string, toBlock: bigint) {
-  const found = new Map<string, { args: Record<string, unknown>; transactionHash: Hash; logIndex: number }>()
-  for (let from = BigInt(deployment.deploymentBlock ?? 0); from <= toBlock; from += 5000n) {
-    const logs = await publicClient.getContractEvents({ address: addressRequired(), abi, eventName, fromBlock: from, toBlock: from + 4999n < toBlock ? from + 4999n : toBlock })
-    for (const log of logs) {
-      if (log.transactionHash === null || log.logIndex === null) continue
-      found.set(`${log.transactionHash}:${log.logIndex}`, { args: (log as unknown as { args: Record<string, unknown> }).args, transactionHash: log.transactionHash, logIndex: log.logIndex })
+  let history = eventHistory.get(eventName)
+  if (!history) { history = { next: BigInt(deployment.deploymentBlock ?? 0), records: new Map() }; eventHistory.set(eventName, history) }
+  if (history.running) await history.running
+  if (history.next > toBlock) return [...history.records.values()].filter(log => log.blockNumber <= toBlock)
+  const current = history
+  current.running = (async () => {
+    while (current.next <= toBlock) {
+      const end = current.next + 4999n < toBlock ? current.next + 4999n : toBlock
+      const logs = await publicClient.getContractEvents({ address: addressRequired(), abi, eventName, fromBlock: current.next, toBlock: end })
+      for (const log of logs) {
+        if (log.transactionHash === null || log.logIndex === null || log.blockNumber === null) continue
+        current.records.set(`${log.transactionHash}:${log.logIndex}`, { args: (log as unknown as { args: Record<string, unknown> }).args, transactionHash: log.transactionHash, logIndex: log.logIndex, blockNumber: log.blockNumber })
+      }
+      current.next = end + 1n
     }
-  }
-  return [...found.values()]
+  })()
+  try { await current.running } finally { current.running = undefined }
+  return [...current.records.values()].filter(log => log.blockNumber <= toBlock)
 }
 export async function readMarkets(blockNumber: bigint): Promise<Market[]> {
-  const logs = await eventLogs('MarketCreated', blockNumber)
-  const ids = [...new Set(logs.map(log => integer(log.args.marketId, 'marketId')))]
+  // IDs are contiguous and immutable; the contract's counter avoids a discovery history scan.
+  const count = integer(await readContract('marketCount', [], blockNumber), 'marketCount')
   const markets: Market[] = []
-  for (let start = 0; start < ids.length; start += 20) markets.push(...await Promise.all(ids.slice(start, start + 20).map(id => readMarket(id, blockNumber))))
+  for (let start = 1n; start <= count; start += 20n) {
+    const ids: bigint[] = []
+    for (let id = start; id <= count && id < start + 20n; id++) ids.push(id)
+    markets.push(...await Promise.all(ids.map(id => readMarket(id, blockNumber))))
+  }
   return markets.reverse()
 }
 export async function readForecastEvents(marketId: bigint) {

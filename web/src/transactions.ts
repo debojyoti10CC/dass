@@ -20,5 +20,6 @@ export function pendingFor(records: TransactionRecord[], account: string | undef
 export function errorMessage(error: unknown): string {
   const item = error as { code?: number; shortMessage?: string; message?: string; cause?: { code?: number } }
   if (item?.code === 4001 || item?.cause?.code === 4001 || /user rejected|user denied/i.test(item?.message ?? '')) return 'Wallet request rejected. No transaction was submitted.'
+  if (item?.code === -32005 || item?.cause?.code === -32005 || /rate limit|exceeds defined limit/i.test(item?.message ?? '')) return 'Arc RPC is temporarily rate-limiting requests. Wait a moment and refresh or prepare the review again.'
   return item?.shortMessage ?? item?.message ?? 'The operation could not be completed.'
 }

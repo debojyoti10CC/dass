@@ -1,4 +1,4 @@
-# Product requirements — Distribution Markets on Arc
+# Product requirements — DAZZ Markets on Arc
 
 Status: implemented application with completed public Arc Testnet deployment and settlement/refund acceptance; mainnet funding/publication pending. Updated: 10 October 2026.
 

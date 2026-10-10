@@ -40,4 +40,8 @@ The script never reads a private key. Without `--send`, it only calls public JSO
 
 ## Completed public testnet and remaining mainnet evidence
 
-The public testnet manifest records the actual verified contract, successful receipt and source fingerprint. Separate deployment/acceptance/resolution/expiry evidence records actual fees, two funded wallets, the exact Coinbase observation, 3 USDC resolved payouts and 2 USDC expiry refunds. Contract token balance matches total liability: 2 USDC football backing. No source commit is invented; the current GitHub connection cannot push. Mainnet funding/deployment/wallet acceptance and public hosting/source remain open.
+The public testnet manifest records the actual verified contract, successful receipt and source fingerprint. Separate deployment/acceptance/resolution/expiry evidence records actual fees, two funded wallets, the exact Coinbase observation, 3 USDC resolved payouts and 2 USDC expiry refunds. Contract token balance matches total liability: 2 USDC football backing. Source is published at https://github.com/debojyoti10CC/dass. Mainnet funding/deployment/wallet acceptance and public hosting/source remain open.
+
+## Browser RPC recovery
+
+Discovery uses the deployed marketCount getter and contiguous market IDs; receipt/claim activity scans confirmed ranges incrementally. The browser paces reads and falls back from the manifest RPC to https://rpc.blockdaemon.testnet.arc.io only for a deployed public Arc Testnet manifest. Circle lists that endpoint in its [official node guide](https://github.com/circlefin/arc-node/blob/main/docs/running-an-arc-node.md). Chain ID 5042002, deployed runtime-code hash and the first 5,000-block event range match the actual deployment in deployments/arc-testnet-rpc-evidence.json. Mainnet and localhost retain their configured RPCs. Read-only preparation stops after 35 seconds; wallet approval and submitted-transaction reconciliation keep their own lifecycle.

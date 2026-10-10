@@ -1,4 +1,4 @@
-# Project memory — Distribution Markets on Arc
+# Project memory — DAZZ Markets on Arc
 
 Updated: 10 October 2026. Records describe actual observations and receipts. Read Phases.md and docs/security-review.md for current gates and limitations.
 
@@ -34,4 +34,12 @@ Clone wolf1276/dass separately, follow PRD/Architecture/Rules/Phases/Memory and 
 
 Mainnet chain 5042 is verified read-only and configured separately in deployments/arc-mainnet.json. Release evidence is tied to current source/evidence fingerprints by scripts/release-gate.mjs. Actual mainnet USDC must fund deployment fees and sponsor backing before any mainnet broadcast. Then deploy/verify, create fresh future markets, check actual mainnet wallet flows, and publish a public live link/source.
 
-The connected GitHub account has `push: false` for wolf1276/dass. The completed source is prepared for terminal commit and push; remote publication must be confirmed from Git. No PR has been created. The current program page excludes testnet-only builds and requires a working mainnet app/public repository/accessible link by October 14, 2026, 23:59 ET. The builder submits their own description/profile; no application or terms acceptance is authorized here.
+The source was pushed through terminal Git to https://github.com/debojyoti10CC/dass on main at e397b3b. The original wolf1276/dass remote is retained as upstream. No PR has been created. The current program page excludes testnet-only builds and requires a working mainnet app/public repository/accessible link by October 14, 2026, 23:59 ET. The builder submits their own description/profile; no application or terms acceptance is authorized here.
+
+## DAZZ Markets interface update
+
+The user named the product **DAZZ Markets** and requested component improvements. The application now uses its own D/curve wordmark and favicon, searchable cards, sports/crypto filters, settlement-status filtering, and market/escrow counts derived from contract records. Card curves display the confirmed Gaussian forecast; the hero diagram is explicitly an illustration. Market detail leads with forecast controls and places confirmed activity afterward. Contract ABI, signing, escrow arithmetic, market rules and protected keys remain the deployed implementation.
+
+A reported stall at Preparing review was reproduced as an indefinitely pending wallet read; public RPC also returned explicit -32005 rate limits. Event history is scanned incrementally with shared in-flight reads, RPC calls are paced with bounded throttling retries, and hidden pages skip polling. Empty transaction history no longer starts a duplicate refresh. Read-only review preparation has a 35-second deadline and visible stages/errors; signing and submitted-transaction recovery are not timed out by this guard. Three deadline regressions and a production-browser timeout/recovery check passed. The latter uses a test-only non-signing wallet read adapter for an actual funded testnet address; balances, rules, simulation and fees come from public Arc RPC. It does not prove a particular user wallet’s approval/signing flow.
+
+Discovery now reads the existing immutable contract marketCount and contiguous IDs directly, avoiding a full MarketCreated history scan. Public testnet reads fall back to the Blockdaemon endpoint listed in Circle’s official arc-node guide, with chain ID/runtime bytecode/event-history parity recorded in deployments/arc-testnet-rpc-evidence.json. The review regression forces primary -32005 throttling and verifies that the real secondary endpoint still produces an actionable preview.

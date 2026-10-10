@@ -1,10 +1,10 @@
-# Distribution Markets on Arc
+# DAZZ Markets on Arc
 
-An end-to-end implementation of the continuous Gaussian distribution market in [Dave White's Paradigm paper](https://www.paradigm.xyz/writing/distribution-markets), deployed and source-verified on public Arc Testnet. Traders move an expected numeric outcome and uncertainty; the sponsor keeps the initial curve's value. Each change deposits the market's fixed `b` USDC. Individual receipts settle at a normalized scalar outcome. A trusted resolver, immutable hashed rules, UTC deadlines, and permissionless expiry cancellation determine finality.
+DAZZ Markets is an end-to-end implementation of the continuous Gaussian distribution market in [Dave White's Paradigm paper](https://www.paradigm.xyz/writing/distribution-markets), deployed and source-verified on public Arc Testnet. Traders move an expected numeric outcome and uncertainty; the sponsor keeps the initial curve's value. Each change deposits the market's fixed `b` USDC. Individual receipts settle at a normalized scalar outcome. A trusted resolver, immutable hashed rules, UTC deadlines, and permissionless expiry cancellation determine finality.
 
 Public contract: [0xc613bca497257cfec8d1754e1d81136cb9862ca8](https://explorer.testnet.arc.io/address/0xc613bca497257cfec8d1754e1d81136cb9862ca8?tab=contract). Real markets cover Premier League total goals and an exact Coinbase BTC/USD candle. Run `npm ci` and `npm run dev` to use this deployment with your own injected EVM wallet. The app never holds wallet private keys.
 
-The UI includes discovery, paired probability-density and P&L charts, keyboard-accessible controls, scenario inspection, positions, sponsor recovery, an operator flow, exact approvals, simulated/staleness-checked transactions, and hash reconciliation. It reads deployed records from Arc. Local demonstration markets are labeled synthetic. The Coinbase style imported from `coinbase/DESIGN.md` is active; the app does not bundle licensed Coinbase fonts or wordmarks.
+The DAZZ interface includes searchable market cards, sports/crypto and settlement-status filters, onchain summary metrics, paired probability-density and P&L charts, keyboard-accessible controls, scenario inspection, positions, sponsor recovery, an operator flow, exact approvals, simulated/staleness-checked transactions, and hash reconciliation. It reads deployed records from Arc. Local demonstration markets are labeled synthetic. The Coinbase style imported from `coinbase/DESIGN.md` is active; the app does not bundle licensed Coinbase fonts or wordmarks.
 
 ## Run the complete local Arc demonstration
 
@@ -39,7 +39,7 @@ For a real-browser wallet-to-receipt smoke, start `npm run demo` and run `npm ru
 
 The local Arc lifecycle is exercised, including native USDC transfer/approval behavior, shared 6/18-decimal balance, restricted transfer rollback, claim recovery, two wallets, and cancellation. Public deployment, source verification, three genuine event markets, two funded trader-wallet receipts and browser acceptance are recorded under `deployments/arc-testnet-*.json`. The actual Coinbase candle closed at 82,583.69 USD; trader/sponsor claims paid exactly 3 USDC from 3 USDC deposited. A separate explicit recovery exercise expired and refunded exactly 2 USDC. The football markets retain 2 USDC backing, matching total liability.
 
-The Arc Microgrants program requires mainnet and excludes testnet-only builds. Mainnet is configured separately and remains undeployed until actual mainnet USDC is provided. Testnet prerequisites are checked against source and evidence fingerprints. The current GitHub connection cannot push this repository. See [docs/security-review.md](docs/security-review.md) and [docs/public-release.md](docs/public-release.md) for evidence and exact next steps. In-house review and automated scans are not an independent audit.
+The Arc Microgrants program requires mainnet and excludes testnet-only builds. Mainnet is configured separately and remains undeployed until actual mainnet USDC is provided. Testnet prerequisites are checked against source and evidence fingerprints. Public source is published at [debojyoti10CC/dass](https://github.com/debojyoti10CC/dass). See [docs/security-review.md](docs/security-review.md) and [docs/public-release.md](docs/public-release.md) for evidence and exact next steps. In-house review and automated scans are not an independent audit.
 
 ## Project files
 

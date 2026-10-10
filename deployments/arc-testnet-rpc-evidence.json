@@ -1,0 +1,11 @@
+{
+  "checkedAt": "2026-10-10T03:45:39.501Z",
+  "chainId": 5042002,
+  "contract": "0xc613bca497257cfec8d1754e1d81136cb9862ca8",
+  "primary": "https://rpc.testnet.arc.io",
+  "secondary": "https://rpc.blockdaemon.testnet.arc.io",
+  "officialSource": "https://github.com/circlefin/arc-node/blob/main/docs/running-an-arc-node.md",
+  "runtimeCodeHash": "0x6c69df14d5f1d8aa2236393b639b51455e729d96ae8eb3f7fefa0e013dbf2440",
+  "eventLogsInFirst5000Blocks": 14,
+  "passed": true
+}

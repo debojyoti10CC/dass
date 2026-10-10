@@ -1,4 +1,4 @@
-# Architecture — Distribution Markets on Arc
+# Architecture — DAZZ Markets on Arc
 
 Status: implemented architecture; public Arc Testnet deployed/verified with completed settlement/refund acceptance; mainnet funding/publication pending. Updated: 10 October 2026.
 

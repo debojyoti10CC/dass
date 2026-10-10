@@ -14,8 +14,8 @@ page.on('pageerror', error => pageErrors.push(error.message));
 
 try {
   await page.goto('http://127.0.0.1:5173', { waitUntil: 'networkidle' });
-  await page.getByRole('heading', { name: 'Markets', exact: true }).waitFor();
-  await page.getByText('2 available').waitFor();
+  await page.getByRole('heading', { name: 'Explore markets', exact: true }).waitFor();
+  await page.getByText('2 markets', { exact: true }).waitFor();
   await page.getByRole('button', { name: /Local demo: what temperature/ }).click();
   await page.getByText('Rules verified').waitFor();
 
@@ -55,7 +55,7 @@ try {
   const width = await page.evaluate(() => ({ viewport: window.innerWidth, document: document.documentElement.scrollWidth }));
   assert.ok(width.document <= width.viewport + 1, `mobile layout overflows horizontally: ${JSON.stringify(width)}`);
   await page.goto('http://127.0.0.1:5173', { waitUntil: 'domcontentloaded' });
-  await page.getByRole('heading', { name: 'Markets', exact: true }).waitFor();
+  await page.getByRole('heading', { name: 'Explore markets', exact: true }).waitFor();
   await page.keyboard.press('Tab');
   await page.waitForFunction(() => document.activeElement?.classList.contains('skip-link'));
   assert.deepEqual(pageErrors, [], `browser errors: ${pageErrors.join('; ')}`);

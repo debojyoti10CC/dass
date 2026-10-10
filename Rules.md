@@ -1,4 +1,4 @@
-# Implementation rules — Distribution Markets on Arc
+# Implementation rules — DAZZ Markets on Arc
 
 Status: normative implementation specification. Updated: 10 October 2026.
 
