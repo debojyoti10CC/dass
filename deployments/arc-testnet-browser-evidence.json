@@ -1,0 +1,20 @@
+{
+  "checkedAt": "2026-10-10T01:31:47.394Z",
+  "chainId": 5042002,
+  "contract": "0xc613bca497257cfec8d1754e1d81136cb9862ca8",
+  "productionBuild": true,
+  "checks": [
+    "Actual public RPC market discovery",
+    "Three real-event markets plus explicit expiry recovery exercise",
+    "Self-contained committed rules verified",
+    "Official source link",
+    "Two confirmed forecast event transaction links",
+    "Resolved and cancelled market escrow fully paid",
+    "Injected-wallet connection required",
+    "No disposable demo wallet",
+    "No inherited local transaction history",
+    "390px layout without overflow",
+    "Zero browser page errors"
+  ],
+  "passed": true
+}

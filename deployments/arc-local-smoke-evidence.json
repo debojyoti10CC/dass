@@ -1,0 +1,57 @@
+{
+  "checkedAt": "2026-10-09T22:56:12.729Z",
+  "mode": "explicit-funded-approve-transfer",
+  "chainId": 5042002,
+  "clientVersion": "anvil/v1.7.1",
+  "rpcUrl": "http://127.0.0.1:8547",
+  "blockNumber": 0,
+  "blockHash": "0x10c711d08396b93536008e73613b1997a0e754cca0176fb94bb6f6370b5a7dfe",
+  "blockTime": "2026-10-09T22:55:38.000Z",
+  "usdcAddress": "0x3600000000000000000000000000000000000000",
+  "usdcDecimals": 6,
+  "nativeDecimals": 18,
+  "observedAddress": "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+  "nativeBalanceRaw": "10000000000000000000000",
+  "erc20BalanceRaw": "10000000000",
+  "nativeUSDC": "10000.000000000000000000",
+  "erc20USDC": "10000.000000",
+  "nativeDustRaw": "0",
+  "sharedBalanceMatches": true,
+  "gasPriceRaw": "21000000000",
+  "minimumMaxFeePerGasRaw": "20000000000",
+  "recommendedMaxFeePerGasRaw": "42000000000",
+  "limitations": [
+    "Funded smoke proves approval and ERC20 transfer only; market escrow, public deployment, and restricted-address behavior require independent verification."
+  ],
+  "allowance": "0",
+  "fundedSmoke": {
+    "account": "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+    "spender": "0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc",
+    "recipient": "0x70997970c51812dc3a010c7d01b50e0d17dc79c8",
+    "amountMicroUSDC": "100000",
+    "exactAllowanceMicroUSDC": "100000",
+    "transactions": [
+      {
+        "action": "approve",
+        "hash": "0x9715764ddc7072ddbf717c0dbf20da76f68edf47d4b2db126c66defaa63dc533",
+        "state": "confirmed",
+        "submittedAt": "2026-10-09T22:56:12.808Z",
+        "blockNumber": 1,
+        "feeNativeRaw": "1108520000000000"
+      },
+      {
+        "action": "transfer",
+        "hash": "0xde35f9964021248ce8071011a4582dcc27a0ab866b42240a754da9b1b29da73a",
+        "state": "confirmed",
+        "submittedAt": "2026-10-09T22:56:13.857Z",
+        "blockNumber": 2,
+        "feeNativeRaw": "48950000"
+      }
+    ],
+    "transferLogEmitters": [
+      "0xfffffffffffffffffffffffffffffffffffffffe",
+      "0x3600000000000000000000000000000000000000"
+    ],
+    "note": "Approval and ERC20 transfer verified; transferFrom and market custody require the lifecycle suite. Approval remains at the exact smoke amount until consumed or revoked."
+  }
+}

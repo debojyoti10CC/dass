@@ -12,6 +12,43 @@
     "dev": "npm run dev --workspace web",
     "build": "npm run build --workspace web",
     "check": "npm run check --workspace web",
-    "preview": "npm run preview --workspace web"
+    "preview": "npm run preview --workspace web",
+    "contracts:build": "node scripts/compile.mjs",
+    "test:reference": "python reference/model.py --check",
+    "test:contracts": "node --test --test-concurrency=1 test/contracts.test.mjs",
+    "test:browser": "node test/browser-smoke.mjs",
+    "test": "npm run test:reference && npm run test:contracts && npm run test:forge",
+    "tools:arc": "node scripts/install-arc-tools.mjs",
+    "node:arc": "node scripts/arc-node.mjs",
+    "smoke:arc": "node scripts/arc-smoke.mjs",
+    "prebuild": "npm run contracts:build",
+    "precheck": "npm run contracts:build",
+    "demo:seed": "node scripts/seed-local.mjs",
+    "dev:local": "node scripts/dev-local.mjs",
+    "predev": "npm run contracts:build",
+    "demo": "node scripts/demo.mjs",
+    "test:forge": "node scripts/arc-forge-test.mjs",
+    "wallet:operator": "node scripts/operator-wallet.mjs",
+    "deploy:testnet": "node scripts/deploy-public.mjs --network arc-testnet",
+    "markets:testnet": "node scripts/real-markets.mjs --network arc-testnet",
+    "test:public": "node scripts/testnet-acceptance.mjs",
+    "test:public:browser": "node test/public-browser.mjs",
+    "resolve:testnet": "node scripts/resolve-coinbase.mjs --network arc-testnet",
+    "verify:testnet": "node scripts/verify-public.mjs --network arc-testnet",
+    "test:public:expiry": "node scripts/testnet-expiry.mjs",
+    "test:release": "node --test test/release-gate.test.mjs",
+    "security:scan": "node scripts/security-scan.mjs",
+    "release:gate": "node scripts/release-gate.mjs",
+    "deploy:mainnet": "node scripts/deploy-public.mjs --network arc-mainnet",
+    "source:package": "python scripts/package-source.py"
+  },
+  "devDependencies": {
+    "@openzeppelin/contracts": "5.4.0",
+    "@playwright/test": "1.64.0",
+    "@prb/math": "4.1.0",
+    "solc": "0.8.30"
+  },
+  "overrides": {
+    "tmp": "0.2.7"
   }
 }

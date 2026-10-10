@@ -6,5 +6,11 @@ web/dist/
 contracts/out/
 contracts/cache/
 contracts/broadcast/
+deployments/local.json
 .DS_Store
 *.log
+work/
+.private/
+__pycache__/
+test-results/
+playwright-report/

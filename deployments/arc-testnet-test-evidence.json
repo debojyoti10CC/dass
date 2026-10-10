@@ -1,0 +1,15 @@
+{
+  "checkedAt": "2026-10-09T23:49:21.699Z",
+  "nodeTestsPassed": 16,
+  "forgeTestsPassed": 10,
+  "fuzzRuns": 768,
+  "numericFixtures": 189,
+  "analyticComparisons": 16380,
+  "claimOrderChecks": 600,
+  "passed": true,
+  "sourceFiles": {
+    "contracts/src/DistributionMarkets.sol": "372a56f527e5609e228850a07abfc3735a92dacce335aa656125eedbeaeb485d",
+    "contracts/src/GaussianMath.sol": "b0ca8a814c36ff3339e74eb72cd7756f2823b3f2e9cb5b7b92db257ca0d2203e"
+  },
+  "testLogSha256": "390a3dda46ff1eb1fec5589c350fe665b5553bf2c509ea5fef6f77e664efece4"
+}

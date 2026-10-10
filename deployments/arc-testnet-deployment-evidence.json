@@ -1,0 +1,15 @@
+{
+  "checkedAt": "2026-10-09T23:36:16.413Z",
+  "chainId": 5042002,
+  "address": "0xc613bca497257cfec8d1754e1d81136cb9862ca8",
+  "operator": "0x8c22625D7f7fd74590F0c57956C2A229E3D2AcBC",
+  "token": "0x3600000000000000000000000000000000000000",
+  "transactionHash": "0x24543eb7f6d6a605693227bd4c3e31e44b9c2550ca83d07a329f59f08e50c5bc",
+  "blockNumber": "66385566",
+  "blockHash": "0x6e3d9a37a9136e5fe2f326ae78251b8a4dc9a771afa4e5d7d9b39f2121923c17",
+  "status": "success",
+  "gasUsed": "2657913",
+  "feeNativeRaw": "83059781250000000",
+  "runtimeCodeHash": "0x6c69df14d5f1d8aa2236393b639b51455e729d96ae8eb3f7fefa0e013dbf2440",
+  "sourceSha256": "cb044b36a17e692e3b81febf1190759771f4778ff9e1bc39ced48e2ac252a75d"
+}

@@ -1,0 +1,131 @@
+{
+  "chainId": 5042002,
+  "contract": "0xc613bca497257cfec8d1754e1d81136cb9862ca8",
+  "preparedAt": "2026-10-09T23:37:13.206Z",
+  "markets": [
+    {
+      "slug": "btc-usd-1791589920",
+      "closeAt": 1791589920,
+      "resolveBy": 1791593520,
+      "initialMean": "82.51741000",
+      "initialSigma": "1",
+      "initialPriceSource": {
+        "url": "https://api.exchange.coinbase.com/products/BTC-USD/ticker",
+        "price": "82517.41",
+        "time": "2026-10-09T23:37:11.343466187Z"
+      },
+      "limits": {
+        "minMean": "1",
+        "maxMean": "1000",
+        "minOutcome": "1",
+        "maxOutcome": "1000",
+        "outcomeStep": "0.000001"
+      },
+      "rules": {
+        "rounding": "Normalize once, then round to the nearest outcomeStep. Exact halves round away from zero.",
+        "evidencePolicy": "Archive exact original source bytes and SHA256, retrieval UTC time, selected record, raw decimal value, normalized WAD and canonical evidence JSON. Commit the keccak256 of that JSON. A hash proves integrity, not correctness.",
+        "initialForecastPolicy": "The initial curve is a sponsor forecast, not bookmaker odds or an externally supplied probability. Every later curve is read from confirmed onchain state.",
+        "question": "BTC/USD close · 2026-10-09 23:53 UTC",
+        "category": "Crypto",
+        "source": "https://api.exchange.coinbase.com/products/BTC-USD/candles?granularity=60&start=2026-10-09T23:52:00.000Z&end=2026-10-09T23:53:00.000Z",
+        "field": "close (array index 4) of the unique candle whose time (index 0) equals 1791589920",
+        "observationAt": "2026-10-09T23:53:00.000Z",
+        "publicationPolicy": "Use the first valid complete Coinbase Exchange BTC-USD 60-second candle retrieved at or after 2026-10-09T23:54:00.000Z. Filter by exact bucket timestamp 1791589920; never substitute the first array item. Later revisions do not apply.",
+        "units": "USD / 1000",
+        "normalization": {
+          "origin": "0",
+          "scale": "1000"
+        },
+        "precision": "Raw USD as published; normalized outcomeStep 0.000001 (0.001 USD).",
+        "missingData": "No exact completed candle, malformed/duplicate records, out-of-bounds value or source unavailable through resolveBy means no resolution. Anyone can cancel at expiry for original-deposit refunds.",
+        "bucketStart": 1791589920,
+        "granularity": 60,
+        "earliestRetrievalAt": "2026-10-09T23:54:00.000Z",
+        "resolverModel": "Trusted project operator verifies and reports the source. No automated oracle network is claimed."
+      },
+      "marketId": "1",
+      "creationTransaction": "0x39493e7a6df76ab200c37cc5867c92dd253498922cf36d7da6cdf55ab7032b87",
+      "rulesHash": "0x982455913f5ccd731e409077d26a177d43d4d30ec9f99d9aa37327b998106706"
+    },
+    {
+      "slug": "coventry-newcastle-2026-10-12",
+      "closeAt": 1791831600,
+      "resolveBy": 1792004400,
+      "initialMean": "2.8",
+      "initialSigma": "1.7",
+      "limits": {
+        "minMean": "0",
+        "maxMean": "30",
+        "minOutcome": "0",
+        "maxOutcome": "30",
+        "outcomeStep": "1"
+      },
+      "rules": {
+        "rounding": "Normalize once, then round to the nearest outcomeStep. Exact halves round away from zero.",
+        "evidencePolicy": "Archive exact original source bytes and SHA256, retrieval UTC time, selected record, raw decimal value, normalized WAD and canonical evidence JSON. Commit the keccak256 of that JSON. A hash proves integrity, not correctness.",
+        "initialForecastPolicy": "The initial curve is a sponsor forecast, not bookmaker odds or an externally supplied probability. Every later curve is read from confirmed onchain state.",
+        "question": "Coventry City vs Newcastle United · total goals",
+        "category": "Football",
+        "source": "https://www.premierleague.com/en/matches/premier-league/2026-27/matchweek-6",
+        "field": "home full-time goals + away full-time goals for Coventry City (home) vs Newcastle United (away), Premier League 2026/27",
+        "observationAt": "2026-10-12T19:00:00.000Z",
+        "publicationPolicy": "Use the first official Premier League FT result for this exact fixture completed after the committed closeAt. Count regulation and stoppage-time goals only. Ignore subsequent disciplinary/administrative score changes. Retain the official match page URL and screenshot/source bytes in evidence.",
+        "units": "goals",
+        "normalization": {
+          "origin": "0",
+          "scale": "1"
+        },
+        "precision": "Integer total goals; outcomeStep 1 goal.",
+        "missingData": "If officially rescheduled to kick off earlier than closeAt, abandoned, cancelled, not completed, not marked FT by resolveBy, or the result is outside 0–30, do not resolve. Anyone cancels at expiry and all original deposits are refunded. A postponement to after closeAt is admissible only if FT is published before resolveBy.",
+        "scheduledKickoffUTC": "2026-10-12T19:00:00.000Z",
+        "fixtureScheduleSource": "https://www.premierleague.com/en/news/4688862",
+        "fixtureScheduleCheckedAt": "2026-10-09T23:37:13.206Z",
+        "resolverModel": "Trusted project operator reports the official score; no live score feed or decentralized sports oracle is claimed.",
+        "distributionCaveat": "Goals are discrete and bounded. The Gaussian is a continuous forecast curve, not exact-score probabilities."
+      },
+      "marketId": "2",
+      "creationTransaction": "0x902dead0e687dc0ed300b4c107e100eccf765f00d53e6337a676b96dabd3aae1",
+      "rulesHash": "0x8a8000d2df1047a35d3b494e8850533f71d5fc8820feaea99b7089d9f996d71e"
+    },
+    {
+      "slug": "everton-chelsea-2026-10-17",
+      "closeAt": 1792236600,
+      "resolveBy": 1792409400,
+      "initialMean": "2.8",
+      "initialSigma": "1.7",
+      "limits": {
+        "minMean": "0",
+        "maxMean": "30",
+        "minOutcome": "0",
+        "maxOutcome": "30",
+        "outcomeStep": "1"
+      },
+      "rules": {
+        "rounding": "Normalize once, then round to the nearest outcomeStep. Exact halves round away from zero.",
+        "evidencePolicy": "Archive exact original source bytes and SHA256, retrieval UTC time, selected record, raw decimal value, normalized WAD and canonical evidence JSON. Commit the keccak256 of that JSON. A hash proves integrity, not correctness.",
+        "initialForecastPolicy": "The initial curve is a sponsor forecast, not bookmaker odds or an externally supplied probability. Every later curve is read from confirmed onchain state.",
+        "question": "Everton vs Chelsea · total goals",
+        "category": "Football",
+        "source": "https://www.premierleague.com/en/matches/premier-league/2026-27/matchweek-7",
+        "field": "home full-time goals + away full-time goals for Everton (home) vs Chelsea (away), Premier League 2026/27",
+        "observationAt": "2026-10-17T11:30:00.000Z",
+        "publicationPolicy": "Use the first official Premier League FT result for this exact fixture completed after the committed closeAt. Count regulation and stoppage-time goals only. Ignore subsequent disciplinary/administrative score changes. Retain the official match page URL and screenshot/source bytes in evidence.",
+        "units": "goals",
+        "normalization": {
+          "origin": "0",
+          "scale": "1"
+        },
+        "precision": "Integer total goals; outcomeStep 1 goal.",
+        "missingData": "If officially rescheduled to kick off earlier than closeAt, abandoned, cancelled, not completed, not marked FT by resolveBy, or the result is outside 0–30, do not resolve. Anyone cancels at expiry and all original deposits are refunded. A postponement to after closeAt is admissible only if FT is published before resolveBy.",
+        "scheduledKickoffUTC": "2026-10-17T11:30:00.000Z",
+        "fixtureScheduleSource": "https://www.premierleague.com/en/news/4688862",
+        "fixtureScheduleCheckedAt": "2026-10-09T23:37:13.206Z",
+        "resolverModel": "Trusted project operator reports the official score; no live score feed or decentralized sports oracle is claimed.",
+        "distributionCaveat": "Goals are discrete and bounded. The Gaussian is a continuous forecast curve, not exact-score probabilities."
+      },
+      "marketId": "3",
+      "creationTransaction": "0x4ade0fcfac3b0b6edd20bf04e1415382fc6adef152c69207a583c43efb248680",
+      "rulesHash": "0x393ca24633faed9d6a07e46e8270800eff5be15f495519ec0e480e54c108ceb4"
+    }
+  ]
+}

@@ -1,43 +1,41 @@
-# New project setup
+# Setup and verification
 
-Updated: 10 October 2026.
+Updated: 10 October 2026. The application, Solidity contracts, numerical reference, and local Arc demonstration are implemented. The public Arc Testnet manifest is intentionally unconfigured until a funded deployment is authorized and market observation rules are selected.
 
-## Environment
+## Requirements
 
-Use Node.js 22.12 or later and npm. Setup was checked with Node `25.9.0` and npm `11.18.0`. React, Vite, and the TypeScript tooling are local dependencies, pinned in the manifests and root lockfile.
+Use Node.js 22.12+ and npm. Python 3.12+ is required for the independent numerical reference. On Windows, the Arc local runtime uses WSL2 with Ubuntu 24.04 or later. The project downloads checksum-pinned Arc Foundry and Solidity tools into the ignored `work/` directory; it does not alter shell profiles or install tools into the user's home.
 
-Run commands from this project folder, which contains the root `package.json`:
+## Run the end-to-end local demo
 
-```sh
+From the directory containing the root `package.json`:
+
+```powershell
 npm ci
-npm run check
-npm run build
-npm run dev
+npm run demo
 ```
 
-The root uses an npm workspace for `web/`. Keep the single root lockfile; do not create a second dependency installation inside `web/`.
+Open the localhost URL printed by Vite. The demo starts a disposable Arc runtime, deploys the contract, creates two clearly labeled synthetic fixture markets, and starts the app with unlocked local-only accounts. It exercises the same contract/UI flow: connect a wallet, approve exact collateral, change a forecast, inspect the receipt, resolve a market with the fixture resolver, claim positions and sponsor funds, and cancel the second market after expiry. These accounts and fixtures are local test data, not public-network identities or live observations.
 
-`npm run check` checks TypeScript. `npm run build` checks TypeScript and creates `web/dist/`. `npm run preview` serves that build locally. These commands validate the scaffold, not the planned financial mechanism.
+On Windows, set `$env:ARC_WSL_DISTRO = 'Ubuntu'` if WSL uses another distro name. The node binds to loopback on port 8547. Press Ctrl+C to stop the demo. For separate terminals use `npm run tools:arc`, `npm run node:arc`, `npm run demo:seed`, and `npm run dev:local` in that order.
 
-## Configuration
+## Verify the project
 
-The current setup screen does not connect to a blockchain and needs no environment file. `.env.example` records proposed public Arc settings for future contract tooling. If needed, copy it to ignored `.env` and verify the values against the official Arc docs before use.
+With the local Arc runtime running, execute:
 
-Do not put secrets in `VITE_` variables: those are bundled into browser code. Do not fund or sign transactions just to run the scaffold.
+```powershell
+npm test
+npm run check
+npm run build
+npm audit --omit=dev
+```
 
-## Contract tools
+`npm test` checks 189 Solidity/Python parity fixtures, high-precision model bounds, lifecycle and adversarial integration against the actual local Arc runtime and native USDC predeploy, and Arc Foundry unit/fuzz/runtime tests. Each fuzz property runs 256 cases. `npm run check` validates TypeScript; `npm run build` emits `web/dist/`. Dependency and tool versions are pinned in the manifests and lockfile.
 
-Arc Foundry was not available during setup and was not installed. Before phase 2, follow the official [installation instructions](https://docs.arc.io/arc/tutorials/install-arc-foundry.md) and [deployment workflow](https://docs.arc.io/arc/tutorials/deploy-on-arc). Confirm compiler and math-library compatibility before creating a Foundry configuration.
+To exercise a browser wallet-to-receipt journey, start `npm run demo` and, in a second terminal, run `npm run test:browser`. It needs the Playwright Chromium binary (installed once with `npx playwright install chromium` if it is missing). The test uses only disposable localhost accounts and writes its screenshot to ignored `work/`.
 
-Contract directories are reserved but contain no Solidity implementation. Once tests exist, use the documented Arc-runtime mode, including `arc-forge test --network arc`. No contract-test script is provided until there are real tests to run.
+## Public Arc Testnet
 
-## Next implementation steps
+The default app configuration points to the actual deployed, source-verified Arc Testnet contract. Connect your own EVM wallet and switch to chain 5042002; faucet USDC pays both fees and collateral. No key is bundled in the app. Public receipts, genuine event rules and two-wallet acceptance evidence live under `deployments/`. `npm run dev:local` is explicitly separate and synthetic. Follow [the public release guide](docs/public-release.md) for public scripts and the mainnet sequence.
 
-1. Read `Rules.md` and phase 1 in `Phases.md`.
-2. Select exact numeric encodings and a reviewed math library.
-3. Build the high-precision reference model and deterministic evaluator fixtures.
-4. Prove safe numeric ranges, evaluator errors, and collateral conservation.
-5. Verify Arc transfers/runtime, then implement tested escrow contracts.
-6. Add wallet reads/writes and the product UI after those gates pass.
-
-No private keys, fake contract addresses, wallet dependencies, deployment, or oracle integrations are included in the starter.
+Never copy a local address, development private key, synthetic observation, or localhost manifest into public configuration. The local developer wallet is enabled only when the manifest is explicitly `local` and both the RPC and page resolve to loopback.

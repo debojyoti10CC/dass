@@ -1,0 +1,67 @@
+{
+  "checkedAt": "2026-10-09T23:56:37.100Z",
+  "tool": "Slither",
+  "version": "0.11.6",
+  "successfulAnalysis": true,
+  "compiler": "0.8.30",
+  "sourceFiles": {
+    "contracts/src/DistributionMarkets.sol": "372a56f527e5609e228850a07abfc3735a92dacce335aa656125eedbeaeb485d",
+    "contracts/src/GaussianMath.sol": "b0ca8a814c36ff3339e74eb72cd7756f2823b3f2e9cb5b7b92db257ca0d2203e"
+  },
+  "findings": [
+    {
+      "check": "divide-before-multiply",
+      "impact": "Medium",
+      "confidence": "Medium",
+      "description": "GaussianMath.evaluate(GaussianMath.Curve,uint256,uint256,int256) (contracts/src/GaussianMath.sol#49-67) performs a multiplication on the result of a division:\n\t- ratioWad = distance * WAD / curve.sigma (contracts/src/GaussianMath.sol#60)\n\t- exponentWad = ratioWad * ratioWad / (2 * WAD) (contracts/src/GaussianMath.sol#61)\n",
+      "disposition": "Reviewed: deliberate fixed-point quantization; bounded numerical error and exact remainder-based grid rounding are specified and tested."
+    },
+    {
+      "check": "divide-before-multiply",
+      "impact": "Medium",
+      "confidence": "Medium",
+      "description": "DistributionMarkets.normalizeOutcome(uint256,int256) (contracts/src/DistributionMarkets.sol#158-172) performs a multiplication on the result of a division:\n\t- quotient = numerator / denominator (contracts/src/DistributionMarkets.sol#165)\n\t- outcomeWad = quotient * step (contracts/src/DistributionMarkets.sol#169)\n",
+      "disposition": "Reviewed: deliberate fixed-point quantization; bounded numerical error and exact remainder-based grid rounding are specified and tested."
+    },
+    {
+      "check": "timestamp",
+      "impact": "Low",
+      "confidence": "Medium",
+      "description": "DistributionMarkets.createMarket(DistributionMarkets.MarketConfig,DistributionMarkets.Curve) (contracts/src/DistributionMarkets.sol#110-146) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- block.timestamp >= config.closeAt || config.closeAt >= config.resolveBy (contracts/src/DistributionMarkets.sol#116)\n",
+      "disposition": "Reviewed: intended deterministic deadline guards; timestamps are not used for randomness. Consensus clock and trusted-resolver assumptions remain disclosed."
+    },
+    {
+      "check": "timestamp",
+      "impact": "Low",
+      "confidence": "Medium",
+      "description": "DistributionMarkets.trade(uint256,DistributionMarkets.Curve,uint256,uint256,uint256) (contracts/src/DistributionMarkets.sol#174-194) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- market.status != Status.Active || block.timestamp >= market.closeAt (contracts/src/DistributionMarkets.sol#178)\n\t- block.timestamp > deadline (contracts/src/DistributionMarkets.sol#179)\n",
+      "disposition": "Reviewed: intended deterministic deadline guards; timestamps are not used for randomness. Consensus clock and trusted-resolver assumptions remain disclosed."
+    },
+    {
+      "check": "timestamp",
+      "impact": "Low",
+      "confidence": "Medium",
+      "description": "DistributionMarkets.resolve(uint256,int256,bytes32) (contracts/src/DistributionMarkets.sol#196-208) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- block.timestamp < market.closeAt || block.timestamp >= market.resolveBy (contracts/src/DistributionMarkets.sol#200)\n",
+      "disposition": "Reviewed: intended deterministic deadline guards; timestamps are not used for randomness. Consensus clock and trusted-resolver assumptions remain disclosed."
+    },
+    {
+      "check": "timestamp",
+      "impact": "Low",
+      "confidence": "Medium",
+      "description": "DistributionMarkets.previewTrade(uint256,DistributionMarkets.Curve) (contracts/src/DistributionMarkets.sol#217-224) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- market.status != Status.Active || block.timestamp >= market.closeAt (contracts/src/DistributionMarkets.sol#221)\n",
+      "disposition": "Reviewed: intended deterministic deadline guards; timestamps are not used for randomness. Consensus clock and trusted-resolver assumptions remain disclosed."
+    },
+    {
+      "check": "timestamp",
+      "impact": "Low",
+      "confidence": "Medium",
+      "description": "DistributionMarkets.cancelExpired(uint256) (contracts/src/DistributionMarkets.sol#210-215) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- market.status != Status.Active || block.timestamp < market.resolveBy (contracts/src/DistributionMarkets.sol#212)\n",
+      "disposition": "Reviewed: intended deterministic deadline guards; timestamps are not used for randomness. Consensus clock and trusted-resolver assumptions remain disclosed."
+    }
+  ],
+  "highFindings": 0,
+  "untriagedFindings": 0,
+  "independentAudit": false,
+  "inHouseReview": "docs/security-review.md",
+  "scope": "Application contract and GaussianMath; imported dependency findings filtered. Not an independent audit."
+}

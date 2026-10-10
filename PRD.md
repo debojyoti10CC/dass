@@ -1,12 +1,12 @@
 # Product requirements — Distribution Markets on Arc
 
-Status: proposed testnet MVP. Updated: 10 October 2026.
+Status: implemented application with completed public Arc Testnet deployment and settlement/refund acceptance; mainnet funding/publication pending. Updated: 10 October 2026.
 
 ## Purpose
 
 Let people trade a forecast for a numeric outcome by changing its expected value and uncertainty. Show how that change pays at different outcomes, settle in USDC, and make collateral and resolution rules understandable before a transaction.
 
-This project follows [the existing plan](plan.md). “Arc” is assumed to mean Circle's Arc blockchain. The first release targets Arc Testnet with faucet funds.
+This project follows [the existing plan](plan.md) and [the Paradigm Distribution Markets paper](https://www.paradigm.xyz/writing/distribution-markets). “Arc” means Circle's Arc blockchain. The app, contracts, numerical reference, and Arc runtime acceptance suite are implemented. The public Arc Testnet contract is deployed and source-verified, with genuine event markets and separately funded trader wallets. The user authorized mainnet for Arc Microgrants after public testnet testing and security checks; actual mainnet funding remains necessary.
 
 ## Audience and jobs
 
@@ -66,4 +66,4 @@ Permissionless creation, live LP changes, multiple distribution families, optima
 
 Demonstrate two wallets changing the same market, stale-preview rejection, verified resolution/evidence, trader and sponsor claims, and escrow reconciliation. Demonstrate a second market expiring and refunding all deposits. Reload the browser and recover positions and transaction status.
 
-No real-money release is included. [Phases.md](Phases.md) defines production gates. [Rules.md](Rules.md) defines enforceable behavior; [Design.md](Design.md) defines the interface.
+The user expanded scope to mainnet after public testnet testing and security review. No mainnet transaction has been sent. [Phases.md](Phases.md) defines remaining production gates. [Rules.md](Rules.md) defines enforceable behavior; [Design.md](Design.md) defines the interface. Acceptance demonstrated in the local Arc runtime is documented in [Memory.md](Memory.md) and [docs/arc-integration.md](docs/arc-integration.md); public wallet funding and source-based settlement/refund acceptance are complete. Mainnet needs actual USDC and deployment/publication checks.

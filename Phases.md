@@ -1,116 +1,55 @@
-# Delivery phases — Distribution Markets on Arc
+# Build phases and verified evidence
 
-Updated: 10 October 2026. All implementation phases are **not started**. Planning documents are complete; no contracts, app, network tests, or deployment have been completed.
+Updated: 10 October 2026. Local implementation follows [plan.md](plan.md), [PRD.md](PRD.md) and [Rules.md](Rules.md). Status records refer to this checkout and to the exact environment stated below.
 
-Phases follow [plan.md](plan.md). Acceptance behavior comes from [PRD.md](PRD.md) and [Rules.md](Rules.md). Work proceeds sequentially across dependencies; independent tasks may be batched within a phase.
+## Phase 1 — mechanism and numerical range: passed
 
-## Phase 1 — Prove the mechanism and numeric range
+Reference model uses Python Decimal at 90 digits; evaluator uses signed/unsigned WAD and pinned PRBMath 4.1.0. Bounds, overflow, safety margin, Gaussian tail and error analysis live in [reference/numeric-spec.md](reference/numeric-spec.md). Its `--check` result was **189 fixtures, 16,380 analytic comparisons, 600 claim-order reconciliations and 12 invalid inputs**; maximum measured absolute error was 0.49999999999992445 micro-USDC against a conservative 0.500003 bound. The same 189 integer outputs matched the compiled Solidity evaluator on the local Arc runtime.
 
-**Deliverables**
+This is a documented bound over admitted parameters, not a formal verification or security audit. The claim differences telescope exactly in integer accounting independently of analytic approximation error.
 
-- High-precision reference model and immutable unit/normalization specification.
-- Candidate fixed-point math library and exact numeric encodings.
-- Admissible mean, standard-deviation, outcome, and backing/norm ranges.
-- Solidity evaluator prototype, error analysis, and parity fixtures.
-- Conservation examples including initial sponsor ownership and cancellation.
+## Phase 2 — Arc integration: local runtime and public funded lifecycle passed
 
-**Exit gate**
+Verified official testnet configuration by a read-only request: chain 5042002, USDC ERC-20 decimals 6, native decimals 18 with the shared-balance conversion, RPC/client identity, and observed gas data are captured in [deployments/arc-testnet-readonly-evidence.json](deployments/arc-testnet-readonly-evidence.json). Arc Foundry `v0.8.0-2` and Solidity `0.8.30` checksums were verified and tools install under ignored `work/`. Actual approval/transfer and event streams passed on Arc's local runtime in [deployments/arc-local-smoke-evidence.json](deployments/arc-local-smoke-evidence.json).
 
-Demonstrate nonnegative payouts and exact integer collateral conservation across arbitrary claim order. Establish a bounded evaluator error, overflow-safe intermediates, safe tails, and backing-margin validation. Cover same-mean, shifted, wider/narrower, minimum-uncertainty, and extreme allowed cases.
+Public deployment, exact approvals, actual funding transfers, forecast deposits and paid claims are confirmed. Native-token restriction and recovery behavior is exercised on the actual local Arc runtime; the project cannot administratively restrict a public user’s token balance for testing.
 
-**Stop condition:** unknown error bounds or unsafe intermediates. Reduce supported ranges and re-evaluate before financial storage logic. Do not substitute outcome buckets or an unverified minimum-loss solver.
+## Phase 3 — core contracts: local Arc runtime passed; independent review pending
 
-## Phase 2 — Verify Arc integration
+`DistributionMarkets.sol` enforces operator-only creation, fixed backing deposits, immutable rules and resolver configuration, nonce-protected curve changes, exact close/resolve/expiry boundaries, normalized scalar outcomes, per-receipt and sponsor claims, escrow isolation, safe token transfers and reentrancy protection. `GaussianMath.sol` is pure and tested independently.
 
-Depends on phase 1's token units and runtime assumptions.
+`npm run test:contracts` passed **16 tests** on Arc localhost, including all Solidity fixtures, roles, normalization edge cases, transfer failures, reentrancy, 50-trade bounded claim gas, two wallets, resolved sponsor/trader claims, cancellation refunds, and actual native Arc USDC lifecycle. Gas to claim comparable receipts after 50 trades was 128,249 and 111,149 units; claim logic has no history-sized loop. `npm run test:forge` passed **10 Arc Foundry tests** with three fuzz properties at 256 runs each. Five tests use Arc's real USDC predeploy, including restricted-transfer failure and later rightful claim recovery. Raw details and source hashes live in [deployments/arc-runtime-test-evidence.json](deployments/arc-runtime-test-evidence.json) and [deployments/arc-runtime-tests.txt](deployments/arc-runtime-tests.txt).
 
-**Deliverables**
+Local test coverage does not replace an independent code/math/security review. Record no independent audit.
 
-- Pinned Arc Foundry/compiler configuration and documented local commands.
-- Chain/token configuration checks and a small USDC transfer smoke test.
-- Wallet setup and faucet instructions.
-- Recorded local Arc-runtime and actual testnet observations.
+## Phase 4 — user flow: local browser acceptance passed; assistive-technology review pending
 
-**Exit gate**
+React, TypeScript and viem application implements market discovery/detail, verified rules, paired forecast and P&L charts, keyboard scenario inspection, fixed-collateral review, positions, sponsor claims, operator setup/resolution/cancellation, wallet/network checks, exact USDC approvals, call simulation, stale preview refresh, pending/unknown transaction hash persistence, and chain-authoritative recovery.
 
-Validate chain ID and decimals, exact allowance/deposit behavior, six/18-decimal handling, fee reservation, and transfer failure paths. Confirm transaction reconciliation behavior rather than assuming generic EVM receipts.
+The browser acceptance at `npm run test:browser` used two disposable trader accounts to change the same market, verified each account selection and exact approval, confirmed both trades, and recovered positions after a page reload. The 390px viewport had no horizontal overflow, keyboard Tab focused the skip link, and no uncaught browser errors occurred. The browser script leaves its screenshot at ignored `work/browser-demo.png`. TypeScript and production builds pass. A manual screen-reader/assistive-technology review remains open; this local browser check does not demonstrate public deployment or a full production accessibility audit.
 
-**Stop condition:** RPC/token mismatch, unsupported compiler/runtime behavior, or unclear transfer semantics. Resolve the mismatch before escrow deployment. No mainnet transactions belong to this phase.
+## Phase 5 — public Arc Testnet: deployed and source-verified
 
-## Phase 3 — Implement and verify core contracts
+`deployments/arc-testnet.json` records the actual deployment at `0xc613bca497257cfec8d1754e1d81136cb9862ca8`, its successful transaction/block, operator and explorer verification. Three genuine event markets are sponsored with native USDC. Two separately generated, funded public wallets have confirmed forecast receipts; stale-nonce rejection and public browser acceptance pass. The exact Coinbase candle closed at 82,583.69 USD; trader/sponsor claims paid 3 USDC from 3 USDC deposited. A fourth explicit recovery exercise expired and refunded 2 USDC after cancellation by a non-resolver. Balance and total liability both equal 2 USDC for football backing. Slither reports zero high, two reviewed medium and five reviewed low findings; no independent audit is claimed. A live local frontend now reads this public deployment. See [docs/public-release.md](docs/public-release.md).
 
-Depends on phases 1 and 2.
+The optional `npm run demo` remains a separate synthetic localhost fixture for development. The default application uses actual public testnet markets and injected wallets.
 
-**Deliverables**
+## Phase 6 — mainnet: testnet prerequisites complete; funding and publication pending
 
-- One non-upgradeable market contract and pure Gaussian math module.
-- Creation, preview/trade, timed close, resolve, expiry cancel, and individual claims.
-- Complete events/getters and documented ABI.
-- Unit, fuzz, conservation, access-control, and Arc-runtime lifecycle tests.
+The user requests mainnet after full testnet testing and security checks for Arc Microgrants, which excludes testnet-only builds. Do not imply that automated scans or an in-house review are an independent audit. Record completed testnet gates before mainnet, estimate real fees, supply actual Arc mainnet USDC, deploy/verify the principal application contract, create new future real-event markets, and publish a working frontend/public source. The current GitHub connection cannot push this repository. Mainnet is not deployed and no program application has been submitted.
 
-**Exit gate**
+## Commands to reproduce local gates
 
-Validate nonce protection, exact deadlines, invalid/unchanged curves, duplicate finalization/claims, failed transfers, reentrancy, arbitrary claim order, and cross-market liability isolation. Show bounded single-claim work after many trades. No admin drain or mutable active-market rules.
+```powershell
+npm ci
+npm run tools:arc
+npm run node:arc
+npm test
+npm run check
+npm run build
+npm audit --omit=dev
+npm run demo
+npm run test:browser
+```
 
-**Stop condition:** any accounting discrepancy, unreachable rightful claim, or cross-market leakage. Fix the root cause before frontend trade wiring.
-
-## Phase 4 — Build the usable forecasting flow
-
-Depends on stable tested contract ABI. Follow [Design.md](Design.md).
-
-**Deliverables**
-
-- Market list/detail, forecast editor, positions, and operator pages.
-- Read-only browsing, wallet/network onboarding, exact approvals, and simulation.
-- Separate probability/P&L charts and clear fixed-collateral copy.
-- Pending/unknown transaction persistence, stale-preview refresh, and claim/refund actions.
-- Generated ABI/config exports, type checks, web build, and focused flow checks.
-
-**Exit gate**
-
-Two wallets can trade, inspect receipts, reload, and claim in the UI. Verify wrong network, wallet rejection, insufficient fees after approval, concurrent curve changes, receipt timeout, and unavailable metadata. Validate mobile, keyboard, screen-reader summaries, and reduced-motion behavior.
-
-**Stop condition:** UI payoff differs from contract semantics, hidden collateral requirement, or retry that can create an unintended second receipt.
-
-## Phase 5 — Release the testnet demo
-
-Depends on phases 1–4 passing.
-
-**Deliverables**
-
-- Selected observation source, finalized rules/evidence format, and immutable market parameters.
-- Verified contract deployment with manifest containing chain/address/block/compiler/source commit.
-- Hosted frontend built against that exact manifest and ABI.
-- README/runbook, faucet instructions, resolver trust disclosure, and evidence archive.
-- Demonstrations of one resolved market and one expired/cancelled market.
-
-**Exit gate**
-
-Record transaction/explorer evidence for funding, two traders, final observation, claims, expiry cancellation, and refunds. Reconcile market and aggregate outstanding liabilities with all claimed funds. Check a fresh wallet and reload recovery. Verify contract source on the explorer.
-
-**Stop condition:** missing verification, ambiguous observation rules, unresolved escrow discrepancy, or frontend pointing to a different contract.
-
-## Phase 6 — Prepare a separate real-money release
-
-Outside the testnet MVP; not authorized or implemented by these documents.
-
-**Prerequisites**
-
-Independent mathematical and contract security review; verified Arc-compatible scalar oracle strategy and dispute/failure policy; launch-jurisdiction assessment; operational controls and monitoring; deployment/recovery runbook; reviewed production configuration.
-
-**Exit gate**
-
-All findings affecting solvency and rightful claims are resolved, scalar-resolution integration is exercised, and production launch decisions are explicitly recorded. Testnet success alone does not meet this gate.
-
-## Evidence and status ledger
-
-| Phase | Status | Completion evidence |
-| --- | --- | --- |
-| 1 | Not started | None; only a floating-point illustrative accounting check during planning. |
-| 2 | Not started | Documentation consulted; no RPC smoke transactions. |
-| 3 | Not started | No contract source or test suite. |
-| 4 | Not started | Design specification only. |
-| 5 | Not started | No deployment, verified source, or hosted app. |
-| 6 | Deferred | No reviews or production oracle integration. |
-
-Update this ledger only with actual artifacts and results. A failed gate stays open; note the failure, owner, and next action in [Memory.md](Memory.md). Estimate implementation effort after phase 1; numerical verification is the primary uncertainty. Do not assign dates or declare a launch deadline without a project schedule.
+Run the local Arc node before `npm test`. `npm run demo` starts the local chain, seeds two synthetic fixture markets, and opens the local-only app. With the demo running, `npm run test:browser` exercises the browser flow. Keep public testnet transactions and signers separate from localhost test accounts.

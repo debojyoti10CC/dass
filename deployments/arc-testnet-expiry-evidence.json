@@ -1,0 +1,72 @@
+{
+  "chainId": 5042002,
+  "contract": "0xc613bca497257cfec8d1754e1d81136cb9862ca8",
+  "slug": "btc-expiry-1791590220",
+  "rules": {
+    "rounding": "Normalize once, then round to the nearest outcomeStep. Exact halves round away from zero.",
+    "evidencePolicy": "Archive exact original source bytes and SHA256, retrieval UTC time, selected record, raw decimal value, normalized WAD and canonical evidence JSON. Commit the keccak256 of that JSON. A hash proves integrity, not correctness.",
+    "initialForecastPolicy": "The initial curve is a sponsor forecast, not bookmaker odds or an externally supplied probability. Every later curve is read from confirmed onchain state.",
+    "question": "BTC/USD 2026-10-09 23:58 UTC · expiry recovery test",
+    "category": "Crypto",
+    "source": "https://api.exchange.coinbase.com/products/BTC-USD/candles?granularity=60&start=2026-10-09T23:57:00.000Z&end=2026-10-09T23:58:00.000Z",
+    "field": "close (index 4) of the unique BTC-USD candle with timestamp 1791590220",
+    "observationAt": "2026-10-09T23:58:00.000Z",
+    "publicationPolicy": "Public testnet recovery exercise: the actual future BTC/USD candle is the event, but the resolver intentionally does not submit a result. This market must expire, not resolve.",
+    "units": "USD / 1000",
+    "normalization": {
+      "origin": "0",
+      "scale": "1000"
+    },
+    "precision": "Raw USD as published; normalized outcomeStep 0.000001 (0.001 USD).",
+    "missingData": "A missing resolver report at resolveBy allows any wallet to cancel and refund all original deposits. No fabricated observation is submitted. This is explicitly a testnet recovery exercise.",
+    "bucketStart": 1791590220,
+    "granularity": 60,
+    "earliestRetrievalAt": "2026-10-09T23:58:30.000Z",
+    "resolverModel": "Trusted project operator verifies and reports the source. No automated oracle network is claimed."
+  },
+  "closeAt": 1791590220,
+  "resolveBy": 1791590340,
+  "initialMean": "82.58552000",
+  "initialPriceSource": {
+    "price": "82585.52",
+    "time": "2026-10-09T23:55:46.606948069Z"
+  },
+  "sponsor": "0x8c22625D7f7fd74590F0c57956C2A229E3D2AcBC",
+  "trader": "0x916dA30A2aB90bF6F5B036389EbA6ff01221f7Fc",
+  "canceller": "0xEa1ddb85B9b4438013AcEB8c87196c6E3A3E8b57",
+  "stage": "cancelled-and-fully-refunded",
+  "transactions": [
+    {
+      "action": "Sponsor actual expiry market",
+      "hash": "0x0af03d63911a1173a80bc899024aed59c92ea7e3c3540f65e59d476749869288"
+    },
+    {
+      "action": "Forecast before real close",
+      "hash": "0x758175baab1972b970e9642f90c3fc28b8d1081b54082fce61bdd35a6e516998"
+    },
+    {
+      "action": "Cancel from a non-resolver wallet",
+      "hash": "0x41d30b6016e863ca9f1ca9277a2c790b2df22f2f0ecc9e77fc77abee9b668cdf"
+    },
+    {
+      "action": "Trader original-deposit refund",
+      "hash": "0x52f3686ea889e81ac90989321a3e78a12e5a78ef42dd6d72728e52c5235d2f60"
+    },
+    {
+      "action": "Sponsor original-backing refund",
+      "hash": "0x3a1b00d885290b498ec5289e97bbc5c296c6d82f2e5b87c0133c37b89dc5549e"
+    }
+  ],
+  "marketId": "4",
+  "receiptId": "3",
+  "checkedAt": "2026-10-09T23:59:47.041Z",
+  "conservation": {
+    "paidMicro": "2000000",
+    "depositedMicro": "2000000",
+    "traderRefundMicro": "1000000",
+    "sponsorRefundMicro": "1000000",
+    "contractTokenBalanceMicro": "2000000",
+    "totalLiabilityMicro": "2000000",
+    "matches": true
+  }
+}

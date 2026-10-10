@@ -1,0 +1,16 @@
+{
+  "checkedAt": "2026-10-10T00:16:16.866Z",
+  "chainId": 5042,
+  "rpcUrl": "https://rpc.mainnet.arc.io",
+  "operator": "0x8c22625D7f7fd74590F0c57956C2A229E3D2AcBC",
+  "balanceUSDC": "0",
+  "deploymentGas": "2680175",
+  "maximumDeploymentFeeUSDC": "0.08040525611401521",
+  "estimatedThreeMarketFeesUSDC": "0.230544917530634196",
+  "sponsorBackingUSDC": "3",
+  "estimatedInitialBudgetUSDC": "3.310950173644649406",
+  "requestedFundingUSDC": "5",
+  "sourceSha256": "cb044b36a17e692e3b81febf1190759771f4778ff9e1bc39ced48e2ac252a75d",
+  "dryRunOnly": true,
+  "caveat": "Deployment gas is a current mainnet simulation; market fees extrapolate the largest confirmed testnet creation/approval with 20% gas and 25% price headroom. Actual fees change. Trader deposits and later resolution/claim fees are separate. No transaction is sent."
+}

@@ -1,0 +1,56 @@
+{
+  "chainId": 5042002,
+  "contract": "0xc613bca497257cfec8d1754e1d81136cb9862ca8",
+  "marketId": "1",
+  "wallets": {
+    "trader-a": "0x916dA30A2aB90bF6F5B036389EbA6ff01221f7Fc",
+    "trader-b": "0xEa1ddb85B9b4438013AcEB8c87196c6E3A3E8b57"
+  },
+  "receipts": {
+    "trader-a": "1",
+    "trader-b": "2"
+  },
+  "transactions": [
+    {
+      "action": "Fund trader-a",
+      "hash": "0x58e5af81fd0c24fd753801c318ce182fe9442f53a785c574645def6dbbd595fe"
+    },
+    {
+      "action": "Forecast trader-a",
+      "hash": "0xa9c2c4d8c38a992e67936e6e49950575926c808facb6ca3291aa5e7f68ab966c"
+    },
+    {
+      "action": "Fund trader-b",
+      "hash": "0xad09d53ff3e1c91364505b8e50c8268205e8d30e7708a35ee65863a5ee29d5d0"
+    },
+    {
+      "action": "Forecast trader-b",
+      "hash": "0x7c4c2e443d043f248f66ef7c01dcf498d516c723bc0d571701c2f45365110361"
+    },
+    {
+      "action": "Claim trader-a",
+      "hash": "0xfdf914cc313d08cb445070acc7ec3f064f66b35e0768f779afe116d0cee58ac4"
+    },
+    {
+      "action": "Claim trader-b",
+      "hash": "0x16147a25b28ef721bf67b5e2422cfa3036732c6448984fd9dd62abb3a79bd720"
+    },
+    {
+      "action": "Sponsor claim",
+      "hash": "0x47fbe51f9a8b02c07702c49e6ebf883e29628be02b9886975020d823602d2227"
+    }
+  ],
+  "scope": "Actual public Arc Testnet transactions with native USDC, separate funded wallets and a real Coinbase Exchange BTC-USD observation.",
+  "staleNonceRejected": true,
+  "stage": "resolved-and-fully-claimed",
+  "checkedAt": "2026-10-09T23:54:49.502Z",
+  "trader-aPayoutMicro": "1021074",
+  "trader-bPayoutMicro": "960277",
+  "conservation": {
+    "depositedMicro": "3000000",
+    "paidMicro": "3000000",
+    "totalLiabilityMicro": "2000000",
+    "contractTokenBalanceMicro": "2000000",
+    "matches": true
+  }
+}

@@ -1,0 +1,21 @@
+Compiling 1 files with Solc 0.8.30
+Solc 0.8.30 finished in 8.55s
+Compiler run successful!
+
+Ran 5 tests for test/ArcRuntime.t.sol:ArcRuntimeTest
+[PASS] testArcBlocklistFailurePreservesClaimThenRecovers() (gas: 1079427)
+[PASS] testERC20TransferEmitsBothPrecisionStreams() (gas: 41668)
+[PASS] testNativeERC20ViewsShareBalanceAndDust() (gas: 43763)
+[PASS] testNativeUSDCResolvedEscrowAndCrossMarketRefunds() (gas: 2172951)
+[PASS] testZeroAddressValueTransfersRevert() (gas: 50833)
+Suite result: ok. 5 passed; 0 failed; 0 skipped; finished in 70.33ms (47.56ms CPU time)
+
+Ran 5 tests for test/DistributionMarkets.t.sol:DistributionMarketsTest
+[PASS] testFuzz_CancellationRefunds(uint256) (runs: 256, μ: 879409, ~: 879409)
+[PASS] testFuzz_EvaluatorAlwaysBounded(int256,int256,uint256) (runs: 256, μ: 4012, ~: 4230)
+[PASS] testFuzz_LifecycleConservation(uint256,uint8) (runs: 256, μ: 1699133, ~: 1693550)
+[PASS] testNormalizationTiesAndAlignedBounds() (gas: 593437)
+[PASS] testTransferFailurePreservesClaim() (gas: 994533)
+Suite result: ok. 5 passed; 0 failed; 0 skipped; finished in 223.92ms (321.19ms CPU time)
+
+Ran 2 test suites in 296.97ms (294.25ms CPU time): 10 tests passed, 0 failed, 0 skipped (10 total tests)

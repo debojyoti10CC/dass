@@ -1,0 +1,26 @@
+{
+  "checkedAt": "2026-10-09T22:50:16.357Z",
+  "mode": "read-only",
+  "chainId": 5042002,
+  "clientVersion": "arc/v1",
+  "rpcUrl": "https://rpc.testnet.arc.io",
+  "blockNumber": 66380112,
+  "blockHash": "0xb6ba99b4d7110c65d862ce81b2251fe67357d45e524893116dfe6bf034c7f172",
+  "blockTime": "2026-10-09T22:50:15.000Z",
+  "usdcAddress": "0x3600000000000000000000000000000000000000",
+  "usdcDecimals": 6,
+  "nativeDecimals": 18,
+  "observedAddress": "0x3600000000000000000000000000000000000000",
+  "nativeBalanceRaw": "189028000000000000000",
+  "erc20BalanceRaw": "189028000",
+  "nativeUSDC": "189.028000000000000000",
+  "erc20USDC": "189.028000",
+  "nativeDustRaw": "0",
+  "sharedBalanceMatches": true,
+  "gasPriceRaw": "25000000000",
+  "minimumMaxFeePerGasRaw": "20000000000",
+  "recommendedMaxFeePerGasRaw": "50000000000",
+  "limitations": [
+    "Read-only checks do not prove funded approval, transfer, escrow, or restricted-address behavior."
+  ]
+}

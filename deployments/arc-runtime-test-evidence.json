@@ -1,0 +1,40 @@
+{
+  "optimizerRuns": 200,
+  "evmVersion": "paris",
+  "fuzzTests": 3,
+  "viaIR": true,
+  "testsFailed": 0,
+  "sourceHashes": {
+    "contracts/test/ArcRuntime.t.sol": "3a6e59e580da9e9b5c7661ee03ce66c07e2b3c2c966d96f0171429a541af4635",
+    "contracts/src/GaussianMath.sol": "b0ca8a814c36ff3339e74eb72cd7756f2823b3f2e9cb5b7b92db257ca0d2203e",
+    "contracts/test/DistributionMarkets.t.sol": "5d22211907d0c4dfe0ba9fe2ca3b99beae80063fd958088c5c992ef1c9786954",
+    "contracts/foundry.toml": "d265f670928a3ec064bc5cbdf23a3e13088f02f3e9fa2491db5fcb271b66b229",
+    "contracts/src/DistributionMarkets.sol": "372a56f527e5609e228850a07abfc3735a92dacce335aa656125eedbeaeb485d"
+  },
+  "testsPassed": 10,
+  "arcFoundryCommit": "d497beea7096ff2a8e583c8b307941f24a61b06b",
+  "checkedAt": "2026-10-09T23:04:25.8831744Z",
+  "logFile": "deployments/arc-runtime-tests.txt",
+  "rpcUrl": "http://127.0.0.1:8547",
+  "testsSkipped": 0,
+  "arcFoundryVersion": "1.7.1-dev",
+  "nativeTests": [
+    "Native/ERC20 shared balance and dust",
+    "Six/eighteen-decimal dual transfer event streams",
+    "Zero-address native and token transfer restrictions",
+    "Real native USDC resolved claims and cross-market cancellation refunds",
+    "Real native USDC blocklist failed-claim preservation and unblock recovery"
+  ],
+  "command": "node scripts/arc-forge-test.mjs",
+  "compilerVersion": "0.8.30+commit.73712a01",
+  "suites": 2,
+  "sourceState": "uncommitted working tree",
+  "networkScope": "disposable local Arc runtime fork",
+  "chainId": 5042002,
+  "publicTransactionsSubmitted": 0,
+  "limitations": [
+    "Local runtime evidence does not establish public deployment, actual testnet wallet acceptance, or public fee costs."
+  ],
+  "fuzzRunsPerTest": 256,
+  "arcFoundryRelease": "v0.8.0-2"
+}

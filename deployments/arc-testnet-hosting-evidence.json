@@ -1,0 +1,14 @@
+{
+  "checkedAt": "2026-10-10T00:13:53.628060+00:00",
+  "projectId": "appgprj_6ac981b9c43881918f5d23694715b3ad",
+  "deploymentId": "appgdep_6ac983246b3881918ad8ff1e12c115ad",
+  "versionId": "appgprj_6ac981b9c43881918f5d23694715b3ad~appgver_04e4522eba948191bcc9044516b0883f",
+  "status": "succeeded",
+  "url": "https://distribution-markets-arc-dass.ddmpersonalworkspace.chatgpt.site",
+  "audience": "owner-private",
+  "sourceCommit": "ccd737c1d5ada03e83d293172aec13c646625f93",
+  "network": "Arc Testnet",
+  "chainId": 5042002,
+  "contract": "0xc613bca497257cfec8d1754e1d81136cb9862ca8",
+  "note": "Successful private HTTPS hosting of compiled application. This is not a public grant link or a mainnet release."
+}

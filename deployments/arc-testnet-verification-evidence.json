@@ -1,0 +1,15 @@
+{
+  "checkedAt": "2026-10-09T23:39:28.300Z",
+  "address": "0xc613bca497257cfec8d1754e1d81136cb9862ca8",
+  "submitted": {
+    "message": "OK",
+    "result": "c613bca497257cfec8d1754e1d81136cb9862ca86ac97ae6",
+    "status": "1"
+  },
+  "status": {
+    "message": "OK",
+    "result": "Pass - Verified",
+    "status": "1"
+  },
+  "url": "https://explorer.testnet.arc.io/address/0xc613bca497257cfec8d1754e1d81136cb9862ca8?tab=contract"
+}

@@ -1,107 +1,37 @@
 # Project memory — Distribution Markets on Arc
 
-Last updated: 10 October 2026. This file records project context and evidence, not hidden instructions or completed work inferred from a plan.
+Updated: 10 October 2026. Records describe actual observations and receipts. Read Phases.md and docs/security-review.md for current gates and limitations.
 
-## User requests
+## User intent and scope
 
-1. Prepare `plan.md` for a dapp based on [Paradigm's Distribution Markets article](https://www.paradigm.xyz/writing/distribution-markets), on Arc.
-2. Create `PRD.md`, `Architecture.md`, `Rules.md`, `Phases.md`, `Design.md`, and `Memory.md`.
+Clone wolf1276/dass separately, follow PRD/Architecture/Rules/Phases/Memory and the Paradigm Distribution Markets paper, build autonomously with the requested Coinbase Design.md, and run locally beside the browser. Later instructions require real wallets, real transactions and real-world markets, public testnet deployment/testing/security review before mainnet, and eventual mainnet for Arc Microgrants. Mainnet has not been deployed; the operator has no mainnet funds. No grant submission has been sent.
 
-The user first requested planning documents, then requested a new project folder and setup file. That authorizes the local scaffold and dependency setup. Wallet transactions, deployment, and publication have not been requested.
+## Mechanism and application
 
-## What exists
+- Fixed-norm continuous Gaussian payout with conservative fixed backing b per sponsor/trader. The paper's optional optimal collateral is not implemented. Deterministic micro-USDC evaluations make receipt/sponsor differences telescope exactly.
+- WAD coordinates, sigma, norm and normalization; six-decimal ERC-20 USDC collateral and eighteen-decimal native gas share one balance. Outcomes round once to the nearest immutable step, exact halves away from zero. Bounds are step-aligned.
+- Immutable token/operator; immutable per-market resolver/rules/deadlines; nonce/deadline/deposit protection; constant-work individual claims; permissionless expired refunds; no admin drain or upgrade. Resolver correctness is trusted and disclosed.
+- Default localhost frontend at http://127.0.0.1:5173 reads the actual public Arc Testnet deployment and connects injected wallets. A separate optional local demo uses synthetic fixtures and disposable accounts. Public transaction storage includes RPC and contract identity because local Arc shares the testnet chain ID.
+- Coinbase layout/tokens are implemented from the requested imported design. Exact WAD editing avoids floating-point input drift; approximate calculations are confined to charts. Operator UI is lazy-loaded. Confirmed public forecast events appear with actual wallet/transaction links.
 
-| Artifact | Role | Current evidence |
-| --- | --- | --- |
-| [plan.md](plan.md) | Overall build proposal | Written during the first request. |
-| [PRD.md](PRD.md) | Product scope and acceptance | Written for the second request. |
-| [Architecture.md](Architecture.md) | Components, data, and transaction flow | Proposed design only. |
-| [Rules.md](Rules.md) | Enforceable behavioral constraints | Proposed specification only. |
-| [Phases.md](Phases.md) | Dependency order and release gates | All implementation phases not started. |
-| [Design.md](Design.md) | Visual system and interaction behavior | No implemented UI or screenshots. |
-| [Memory.md](Memory.md) | Context, decisions, and evidence | This document. |
+## Actual public testnet
 
-The working project is `/Users/ahir/projects/distribution-markets-arc/`. Its root documents are the current specifications; parent-folder copies are earlier planning snapshots. A minimal React/TypeScript/Vite setup screen now exists in `web/`. Contract, reference, and deployment folders are reserved. No financial logic, wallet integration, Solidity implementation, reference model, deployment manifest, or application test suite exists.
+- Chain 5042002, https://rpc.testnet.arc.io. Contract **0xc613bca497257cfec8d1754e1d81136cb9862ca8**, deployment tx **0x24543eb7f6d6a605693227bd4c3e31e44b9c2550ca83d07a329f59f08e50c5bc**, block 66385566. Explorer source verification passed.
+- Dedicated operator/resolver **0x8c22625D7f7fd74590F0c57956C2A229E3D2AcBC** and two separately generated/funded trader wallets. Local development keys were never used publicly. Signers are protected with Windows CurrentUser DPAPI in Git-ignored `.private/`, excluded from browser/source archives. Back up that encrypted folder with this Windows account's credential backup.
+- Three real-event markets: exact Coinbase BTC/USD candle; Coventry City–Newcastle United total goals (Oct 12, 19:00 UTC); Everton–Chelsea total goals (Oct 17, 11:30 UTC). Official fixture schedule/source committed in self-contained hashed rules. Initial curves are sponsor forecasts, not bookmaker odds.
+- BTC candle epoch 1791589920 closed at **82,583.69 USD**. Original source bytes, canonical evidence and hash are archived under web/public/evidence. Both actual traders and sponsor claimed: 1.021074 + 0.960277 + 1.018649 = **3 USDC deposited and paid**. Stale nonce was rejected.
+- Fourth market was explicitly an expiry recovery exercise on a genuine future BTC candle, with the resolver intentionally offline. A non-resolver wallet cancelled after the real deadline; trader/sponsor each received 1 USDC back. **2 USDC deposited and refunded**. Contract balance equals total liability: 2 USDC for the two football sponsors.
+- Evidence: deployments/arc-testnet-{deployment,verification,acceptance,resolution,expiry,browser,test,security}-evidence.json. Only DistributionMarkets requires deployment; internal math/dependencies are inlined, test harnesses/mocks are excluded.
 
-## Research performed
+## Verification
 
-Read the referenced article and current official Arc connection, contract-address, fee, deployment, and runtime documentation during the first request. Some `docs.arc.network` URLs redirected to `docs.arc.io`.
+- 90-digit numeric reference: 189 fixtures, 16,380 analytic comparisons, 600 claim orders, 12 invalid cases. Maximum observed error 0.49999999999992445 micro-USDC, conservative bound 0.500003.
+- Fresh full npm test: 16 Node lifecycle/adversarial tests, 10 Arc Forge tests and 768 fuzz runs. Actual Arc native-USDC restriction rollback, claim recovery, balance/event precision, market isolation, reentrancy and donations exercised on local Arc runtime.
+- TypeScript/production build and actual public RPC browser checks pass. Mobile 390px has no horizontal overflow; no uncaught browser errors; no fake injected wallet or browser signing material. Manual assistive-technology review remains pending.
+- Slither 0.11.6: zero high, two medium fixed-point ordering findings and five low timestamp guards; all manually reviewed with dispositions. **No independent audit** has been performed. Production dependency audit: zero vulnerabilities.
 
-Documentation snapshot used for the proposal:
+## Remaining mainnet and publication
 
-- Arc Testnet chain ID `5042002`.
-- RPC `https://rpc.testnet.arc.io` and explorer `https://explorer.testnet.arc.io`.
-- USDC ERC-20 interface `0x3600000000000000000000000000000000000000`.
-- ERC-20 application accounting uses six decimals; native gas accounting uses 18 decimals, sharing the underlying USDC balance.
-- Arc documentation recommends Arc Foundry and Arc-runtime tests.
+Mainnet chain 5042 is verified read-only and configured separately in deployments/arc-mainnet.json. Release evidence is tied to current source/evidence fingerprints by scripts/release-gate.mjs. Actual mainnet USDC must fund deployment fees and sponsor backing before any mainnet broadcast. Then deploy/verify, create fresh future markets, check actual mainnet wallet flows, and publish a public live link/source.
 
-These are researched configuration facts, not proof that a wallet or deployment currently works. Revalidate before implementation/deployment using [connection docs](https://docs.arc.io/arc/references/connect-to-arc), [token addresses](https://docs.arc.io/arc/references/contract-addresses), and [deployment docs](https://docs.arc.io/arc/tutorials/deploy-on-arc).
-
-## Assumptions and proposed decisions
-
-The following were chosen by the assistant as a coherent MVP and have not been individually approved as a final implementation specification:
-
-| Decision | Reason |
-| --- | --- |
-| Arc means Circle's Arc | Context suggests a blockchain deployment; user has not clarified further. |
-| Start on testnet | Smallest useful demonstration with faucet-funded settlement. |
-| Gaussian-only curves | Compact continuous mechanism with a tractable evaluator. |
-| Fixed trader deposit `D = b` | Sufficient collateral bound without an unverified minimum-loss solver. |
-| Creator is sole sponsor | Avoids dynamic LP share accounting in the first release. |
-| Sponsor retains initial curve ownership | Required to account for the starting nonzero curve. |
-| One non-upgradeable contract | Small scope and no requested upgrade mechanism. |
-| Trusted immutable resolver | Explicit testnet resolution policy; no verified oracle integration. |
-| Individual nontransferable receipts | Avoids global claim loops and token/early-exit complexity. |
-| Expiry cancellation refunds deposits | Provides recovery when resolution never arrives. |
-| React/TypeScript/Vite and viem/wagmi | Proposed small EVM frontend; dependencies not installed. |
-| Cool plotting workspace with paired charts | Makes uncertainty and financial consequences the main interaction. |
-
-A weather observation is an example only. No source, station, event, timeline, actual backing, norm parameter, or resolver address has been selected.
-
-## Accounting context to preserve
-
-Each curve change owns its new-minus-old payout difference. Trader settlement adds back its deposit. Sponsor settlement includes both original-curve ownership and final AMM residual:
-
-```text
-trader_i = D_i + F(new_i, outcome) - F(old_i, outcome)
-sponsor  = b + F(initial, outcome) - F(final, outcome)
-```
-
-Use the same deterministic integer `F` in every term. Values in `[0,b]` plus `D_i=b` ensure nonnegative claims. The telescoping sum equals tracked deposits. Keep each market's liability separate from direct donations and other markets.
-
-Exact integer conservation is not a proof of accuracy against the analytic Gaussian or of a reviewed implementation. Numerical range/error certification remains phase 1 work.
-
-## Validation actually performed
-
-During the original plan preparation, a Python floating-point check confirmed the illustrative `b=10`, initial standard deviation `1`, proposed standard deviation `4` example, and multi-trade payout conservation/nonnegative payouts at seven sample outcomes. The example gives trader `5` and sponsor `15` at the shared mean from `20` total deposits.
-
-That check is illustrative, not Solidity testing, formal proof, high-precision parity, or an audit. No RPC transactions, oracle availability checks, bytecode deployments, wallet approvals, or contract tests have been performed.
-
-Document checks passed for all six requested files and the original plan: nonempty content, balanced Markdown fences, and valid local cross-links. The MVP scope and settlement semantics were reviewed for consistency. Record implementation test results only after tests actually run.
-
-## Open implementation decisions
-
-- Observation source, publication/revision policy, units, precision, and raw-value encoding.
-- Supported numeric ranges, normalization scale, backing `b`, and norm parameter `k`.
-- Reviewed fixed-point math library and compatible compiler/tool versions.
-- Resolver/operator wallets and durable rules/evidence storage.
-- Gas/receipt behavior under actual Arc runtime and testnet conditions.
-- Production scalar oracle, independent review, and launch requirements, if later requested.
-
-No implementation schedule or production launch date has been committed.
-
-## Next work
-
-If asked to implement, begin with [Phases.md, phase 1](Phases.md): reference model, deterministic evaluator, safe numeric ranges, and conservation/error fixtures. Then verify Arc integration before custody contracts and frontend execution.
-
-Keep deferred features deferred. If a decision changes, update the owning specification and references; mark previous assumptions superseded rather than leaving contradictory instructions. Append dated entries with the decision, reason, affected artifacts, and actual verification evidence.
-
-## 10 October 2026 — Project scaffold
-
-Created the named project folder, copied the seven planning documents, added README/SETUP instructions, npm workspace manifests, a React/TypeScript/Vite setup screen, ignored environment example, and reserved contract/reference/deployment folders. Financial implementation phases remain unstarted. Dependencies were installed and all direct versions pinned in the workspace manifest and root lockfile. `npm run build` passed TypeScript checks and the Vite production build. A local dev-server smoke check returned HTTP 200 for the page and transformed React entry module. Document links and Markdown fences passed checks. No browser visual QA or financial tests were run. Arc Foundry is unavailable on PATH and has not been installed.
-
-## 10 October 2026 — Project location
-
-At the user's request, moved the complete project to `/Users/ahir/projects/distribution-markets-arc/`, including dependencies and lockfile. Original planning snapshots remain in the prior workspace outputs directory.
-
-Project location corrected to `/Users/ahir/projects/distribution-markets-arc/` at the user's request.
+The connected GitHub account has `push: false` for wolf1276/dass. The completed source is prepared for terminal commit and push; remote publication must be confirmed from Git. No PR has been created. The current program page excludes testnet-only builds and requires a working mainnet app/public repository/accessible link by October 14, 2026, 23:59 ET. The builder submits their own description/profile; no application or terms acceptance is authorized here.

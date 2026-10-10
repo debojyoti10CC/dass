@@ -1,6 +1,6 @@
 # Architecture — Distribution Markets on Arc
 
-Status: proposed architecture; no implementation exists. Updated: 10 October 2026.
+Status: implemented architecture; public Arc Testnet deployed/verified with completed settlement/refund acceptance; mainnet funding/publication pending. Updated: 10 October 2026.
 
 ## System boundary
 
@@ -25,14 +25,14 @@ flowchart LR
 | Component | Proposed choice | Responsibility |
 | --- | --- | --- |
 | Web app | React, TypeScript, Vite | Market pages, editor, positions, operator controls. |
-| Chain access | viem/wagmi | Reads, simulation, wallet calls, and receipt tracking. |
+| Chain access | viem | Reads, simulation, wallet calls, and receipt tracking. |
 | Charts | SVG | Probability density, interval highlights, and P&L. |
 | Contracts | Solidity, Arc Foundry | Market lifecycle and escrow. |
 | Gaussian math | One reviewed fixed-point library plus pure evaluator | Exponential/square root and deterministic integer curve values. |
 | Reference | High-precision Python model | Independent fixtures and numerical error analysis. |
 | Storage | Contract records plus immutable metadata | Authoritative financial state and committed market rules. |
 
-Library and compiler versions remain undecided until numerical and Arc compatibility checks pass. Do not add a custom backend, factory, upgrade proxy, or token standard to this MVP.
+Compatibility checks passed for the pinned toolchain: Solidity 0.8.30, PRBMath 4.1.0, OpenZeppelin 5.4.0, Arc Foundry v0.8.0-2, Node, React, Vite, and viem versions are pinned in the manifests, lockfile, and evidence. Do not add a custom backend, factory, upgrade proxy, or token standard to this MVP.
 
 ## Network configuration
 
@@ -48,7 +48,7 @@ Each market records sponsor, resolver, rules commitment/URI, units/normalization
 
 Each receipt records owner, market ID, old/new curves, deposit, and claimed flag. IDs are monotonic. No receipt can be transferred, merged, or modified. Store no per-outcome token array.
 
-Represent coordinates with a single documented fixed-point scale and collateral with micro-USDC. Store creation bounds and normalization immutably. The resolver converts the raw observation into the canonical normalized outcome using committed units and rounding. The contract validates its encoding and supported range; correctness against source evidence remains trusted. Choose the exact encoding in phase 1 and keep it identical in ABI, fixtures, and evidence. The frontend must not choose its own convention.
+Represent coordinates with a single documented fixed-point scale and collateral with micro-USDC. Store creation bounds and normalization immutably. The resolver submits the canonical normalized outcome; conversion from source units follows the committed rules and nearest-step rounding, with exact halves away from zero. The contract validates its encoding and supported range; correctness against source evidence remains trusted. See [reference/numeric-spec.md](reference/numeric-spec.md). The frontend reads these bounds and must not choose its own convention.
 
 ## Lifecycle
 
@@ -78,7 +78,7 @@ Use one deterministic integer evaluator `F(curve, outcome)` bounded to `[0,b]`. 
 
 The chain of stored curves telescopes, so the sum of integer claims equals total recorded deposits. Track `deposited` and `paid` per market. Maintain an aggregate outstanding-liability counter if needed for a constant-time contract-wide balance check; never use token balance as the source of claim ownership.
 
-Set claim flags and decrement liability before token transfers, under reentrancy protection. A failed transfer must revert the entire claim. Use safe ERC-20 calls; no native sends, `SELFDESTRUCT`, or admin withdrawal of user liabilities. Direct donations do not alter market backing or payouts.
+Set claim flags and decrement liability before token transfers, under reentrancy protection. A failed transfer must revert the entire claim. Use safe ERC-20 calls; no native sends, `SELFDESTRUCT`, or admin withdrawal of user liabilities. Direct donations do not alter market backing or payouts. The implemented contract also checks that each market's outcome interval contains at least one admissible outcome-step multiple.
 
 ## Reads, events, and recovery
 
@@ -94,6 +94,6 @@ Use a deterministic serialized rules document with a stored hash, plus URI. Fron
 
 ## Build structure and deployment
 
-Follow the directory layout in [plan.md](plan.md). Generate browser ABI/address exports from contract artifacts and `deployments/arc-testnet.json`. Manifest records chain ID, address, deployment block, compiler/tool versions, source commit, and verification link. Secrets stay in ignored files or a deployment secret store.
+Follow the directory layout in [plan.md](plan.md). Generate browser ABI/address exports from artifacts and the chosen deployment manifest. Public testnet is deployed and verified; mainnet and local deployment use separate manifests. Manifests record actual receipts, chain ID, operator, compiler settings, source fingerprint and verification link. Browser transaction history is isolated by chain, RPC and contract. Public real-market rules are self-contained base64 canonical JSON whose exact bytes must match the stored hash. Signing material is Windows DPAPI protected in ignored `.private/` and never exported to browser code.
 
-CI runs reference fixture checks, contract tests/invariants on Arc's runtime, TypeScript checks, and web build. Actual testnet transactions remain a release gate. [Rules.md](Rules.md) is the normative behavioral specification; [Phases.md](Phases.md) records the gate sequence.
+CI runs reference fixture checks, contract tests/invariants on Arc's runtime, TypeScript checks, and web build. Actual testnet settlement and refund evidence is complete; mainnet scripts validate current source and evidence fingerprints first. [Rules.md](Rules.md) is the normative behavioral specification; [Phases.md](Phases.md) records the gate sequence.

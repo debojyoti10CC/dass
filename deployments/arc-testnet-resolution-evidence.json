@@ -1,0 +1,12 @@
+{
+  "checkedAt": "2026-10-09T23:54:37.002Z",
+  "contract": "0xc613bca497257cfec8d1754e1d81136cb9862ca8",
+  "marketId": "1",
+  "rawValue": "82583.69",
+  "normalizedOutcome": "82583690000000000000",
+  "evidenceHash": "0x84869847030c7ca52ee2009d7ddadb8876432fc34ed5bdbe37887da768f80e1e",
+  "evidencePath": "web/public/evidence/arc-testnet-btc-usd-1791589920/evidence.json",
+  "sourceSha256": "5b942c1560d0c3492a60b89e8e990cb48fbcfbb0c187573ae71989e92907ac93",
+  "transactionHash": "0x0fa35540774c99123bed8d5c5586b90343b053cd3a771c6341656d06ca27f5cd",
+  "blockNumber": "66387740"
+}

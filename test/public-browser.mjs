@@ -1,0 +1,44 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+import { chromium, expect } from '@playwright/test';
+const manifest = JSON.parse(fs.readFileSync('deployments/arc-testnet.json', 'utf8'));
+assert.equal(manifest.status, 'deployed');
+const browser = await chromium.launch({ headless: true, executablePath: chromium.executablePath() });
+const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
+const errors = []; page.on('pageerror', error => errors.push(error.message));
+try {
+  await page.goto(process.env.DASS_BROWSER_URL ?? 'http://127.0.0.1:5173/');
+  await expect(page.getByRole('button', { name: /Everton vs Chelsea/ })).toBeVisible({ timeout: 45000 });
+  await expect(page.getByRole('button', { name: /Coventry City vs Newcastle/ })).toBeVisible();
+  await expect(page.getByRole('button', { name: /BTC\/USD close/ })).toBeVisible();
+  await expect(page.getByRole('button', { name: /expiry recovery test/ })).toBeVisible();
+  await expect(page.getByText('Arc Testnet', { exact: true })).toBeVisible();
+  await expect(page.getByText('PUBLIC ARC TESTNET', { exact: true })).toBeVisible();
+  await expect(page.getByRole('link', { name: /0xc613/ }).first()).toHaveAttribute('href', `${manifest.explorerUrl}/address/${manifest.address}`);
+  await expect(page.getByLabel('Disposable demo wallet')).toHaveCount(0);
+  await expect(page.getByRole('heading', { name: 'Transaction activity' })).toHaveCount(0);
+  await page.getByRole('button', { name: /Everton vs Chelsea/ }).click();
+  await expect(page.getByText('Rules verified', { exact: true })).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Official resolution source' })).toHaveAttribute('href', 'https://www.premierleague.com/en/matches/premier-league/2026-27/matchweek-7');
+  await expect(page.getByRole('button', { name: 'Connect to review forecast' })).toBeVisible();
+  await expect(page.getByLabel('Expected outcome', { exact: false }).first()).toHaveValue('2.8');
+  await page.getByRole('button', { name: 'Markets', exact: true }).click();
+  await page.getByRole('button', { name: /BTC\/USD close/ }).click();
+  await expect(page.getByRole('heading', { name: 'Onchain forecasts' })).toBeVisible();
+  const acceptance = JSON.parse(fs.readFileSync('deployments/arc-testnet-acceptance-evidence.json', 'utf8'));
+  for (const trade of acceptance.transactions.filter(item => item.action.startsWith('Forecast '))) {
+    await expect(page.locator(`a[href="${manifest.explorerUrl}/tx/${trade.hash}"]`)).toBeVisible({ timeout: 30000 });
+  }
+  await expect(page.getByText('3.00 deposited · 3.00 paid', { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Markets', exact: true }).click();
+  await page.getByRole('button', { name: /expiry recovery test/ }).click();
+  await expect(page.getByText('2.00 deposited · 2.00 paid', { exact: true })).toBeVisible();
+  await page.setViewportSize({ width: 390, height: 844 });
+  assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth), 'No horizontal overflow on mobile');
+  await page.getByRole('button', { name: 'My positions', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Connect wallet' }).last()).toBeVisible();
+  await page.screenshot({ path: 'work/public-testnet-mobile.png', fullPage: true });
+  assert.deepEqual(errors, []);
+  fs.writeFileSync('deployments/arc-testnet-browser-evidence.json', JSON.stringify({ checkedAt: new Date().toISOString(), chainId: manifest.chainId, contract: manifest.address, productionBuild: process.env.DASS_BROWSER_PRODUCTION === 'true', checks: ['Actual public RPC market discovery', 'Three real-event markets plus explicit expiry recovery exercise', 'Self-contained committed rules verified', 'Official source link', 'Two confirmed forecast event transaction links', 'Resolved and cancelled market escrow fully paid', 'Injected-wallet connection required', 'No disposable demo wallet', 'No inherited local transaction history', '390px layout without overflow', 'Zero browser page errors'], passed: true }, null, 2) + '\n');
+  console.log('Public Arc Testnet browser checks passed. No wallet was faked and no browser signing key was provided.');
+} finally { await browser.close(); }

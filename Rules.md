@@ -1,6 +1,6 @@
 # Implementation rules — Distribution Markets on Arc
 
-Status: proposed project specification. Updated: 10 October 2026.
+Status: normative implementation specification. Updated: 10 October 2026.
 
 These rules define the app's behavior and implementation constraints. They do not replace user instructions or platform policies. Product scope is in [PRD.md](PRD.md); architecture is in [Architecture.md](Architecture.md).
 
@@ -56,9 +56,9 @@ Resolved and cancelled states never transition again. At the resolution deadline
 
 ## Numerical rules
 
-Use signed fixed-point coordinates, a reviewed math dependency, and documented conversion helpers. Pin versions after compatibility checks. Do not implement new exponential/square-root primitives for this app.
+Use signed fixed-point coordinates, a reviewed math dependency, and documented conversion helpers. The implementation pins PRBMath 4.1.0 and compiles for the Arc-compatible Paris EVM target. Do not implement new exponential/square-root primitives for this app.
 
-Before settlement logic is accepted, establish admissible ranges, overflow safety, error budgets, tail behavior, and high-precision parity fixtures. Target at most one micro-USDC absolute error per curve evaluation over admitted inputs, including rounding; two-curve differences can accumulate both endpoint errors. If the target fails, narrow the supported range rather than hiding the discrepancy.
+The local implementation establishes admissible ranges, overflow safety, error budgets, tail behavior, and high-precision parity fixtures in [reference/numeric-spec.md](reference/numeric-spec.md). Its measured maximum error is below one micro-USDC per curve evaluation. This bound is for the admitted input domain; retain parity and boundary checks when changing the evaluator.
 
 No minimum-collateral optimization ships without a reviewed global loss bound. A chart grid, local extremum, or backend quote cannot authorize undercollateralized trades.
 

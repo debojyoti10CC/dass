@@ -1,0 +1,27 @@
+{
+  "checkedAt": "2026-10-10T01:31:49.152Z",
+  "testnetPrerequisitesPassed": true,
+  "contract": "0xc613bca497257cfec8d1754e1d81136cb9862ca8",
+  "chainId": 5042002,
+  "sourceSha256": "cb044b36a17e692e3b81febf1190759771f4778ff9e1bc39ced48e2ac252a75d",
+  "evidenceSha256": {
+    "deployments/arc-testnet.json": "21a7164d4402f45642499757722a84b8859a570b568a1e961e69ecf65a5d48e0",
+    "deployments/arc-testnet-deployment-evidence.json": "f97ddc19e3fe1ca58fbcc577ad81df595d314994b0a75a1ff2a45d8d17a3eb5d",
+    "deployments/arc-testnet-verification-evidence.json": "0c36720f5c7222fb42401419f805b5acbc9783315475aa6698cf4f3c0e1990b7",
+    "deployments/arc-testnet-test-evidence.json": "3bd3bf794f74b4b8ed6695e57f993eebc5f83e88a24243b4b22fe42894bb0cab",
+    "deployments/arc-testnet-security-evidence.json": "519f8d838f3725d43229efc4972c08fa84729001280af7907baee5897bb5d94e",
+    "deployments/arc-testnet-acceptance-evidence.json": "bbbc79b041aeaf3e51de0bf826476d6b472eed8e3097d6371c0a7ef125d033ac",
+    "deployments/arc-testnet-resolution-evidence.json": "0e9479310401e4b80265d23b32b0de5b8c70285b9a557b46c4ebe6bf86c04e7e",
+    "deployments/arc-testnet-expiry-evidence.json": "3ee33541c80cd2127f2f5db9f32ccf7115ecf74da10bf388d97d22620fd10774",
+    "deployments/arc-testnet-browser-evidence.json": "b9f25d0675aaac7c4b85a8afa154f9de07a272ddb8ce7a2fe571c9d9e34cf67c",
+    "deployments/arc-testnet-build-evidence.json": "cf3d90f7c0e33302d83f9c569b4fcccd54f72c5346798d12b9f1cc0f77331a45"
+  },
+  "independentAudit": false,
+  "resolverModel": "Trusted project operator",
+  "mainnetDeployed": false,
+  "limitations": [
+    "In-house review and automated scan; no independent audit",
+    "Manual assistive-technology review pending",
+    "Mainnet funding, deployment, live wallet acceptance and public hosting/source are separate requirements"
+  ]
+}

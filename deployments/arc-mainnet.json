@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "network": "Arc Mainnet",
+  "chainId": 5042,
+  "rpcUrl": "https://rpc.mainnet.arc.io",
+  "explorerUrl": "https://explorer.arc.io",
+  "tokenAddress": "0x3600000000000000000000000000000000000000",
+  "usdcDecimals": 6,
+  "nativeDecimals": 18,
+  "address": null,
+  "deploymentBlock": null,
+  "deploymentTransaction": null,
+  "operator": null,
+  "compilerVersion": "0.8.30",
+  "evmVersion": "paris",
+  "optimizerRuns": 200,
+  "viaIR": true,
+  "sourceCommit": null,
+  "verificationUrl": null,
+  "status": "undeployed",
+  "note": "Public testnet acceptance and security review come first. Mainnet needs actual Arc USDC funding. No placeholder address constitutes a deployment."
+}
