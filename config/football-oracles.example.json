@@ -1,0 +1,15 @@
+{
+  "fixtures": [
+    {
+      "slug": "home-away-YYYY-MM-DD",
+      "home": "Home club",
+      "away": "Away club",
+      "kickoffUTC": "YYYY-MM-DDTHH:MM:SS.000Z",
+      "sources": [
+        { "id": "football-data", "fixtureId": null, "homeTeamId": null, "awayTeamId": null, "competitionId": null, "seasonId": null },
+        { "id": "api-football", "fixtureId": null, "homeTeamId": null, "awayTeamId": null, "competitionId": null, "seasonId": null },
+        { "id": "sportmonks", "fixtureId": null, "homeTeamId": null, "awayTeamId": null, "competitionId": null, "seasonId": null }
+      ]
+    }
+  ]
+}

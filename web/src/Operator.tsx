@@ -106,6 +106,7 @@ function Resolution({ market, rules, workspace }: { market: Market; rules?: Rule
     setWorking(true)
     try {
       if (!rules?.document || rules.status !== 'verified') throw new Error('Verified committed rules are required before preparing resolution.')
+      if (rules.document.oracleHealth) throw new Error('This market requires three-source archive validation. Resolve it with the protected resolver command after oracle health passes.')
       const outcome = await readContract('normalizeOutcome', [market.id, coordinate(rawValue)]) as bigint
       const doc = JSON.parse(evidence) as Record<string, unknown>
       validateEvidenceRules(doc, rules.document, market.rulesHash)

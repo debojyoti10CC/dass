@@ -37,6 +37,12 @@ Keep `node:arc` running in its own terminal during `npm test`. The checks includ
 
 For a real-browser wallet-to-receipt smoke, start `npm run demo` and run `npm run test:browser` in a second terminal. It selects a disposable trader account, approves exact collateral, confirms a forecast trade, reloads the positions view, and writes a screenshot under ignored `work/`.
 
+## Oracle health
+
+Run `npm run oracle:health` to check Coinbase, Bitstamp, and Kraken BTC/USD minute candles without a wallet or transaction. New crypto markets commit an all-three health policy; the resolver blocks signing on missing/stale data or more than 1% spread. Cached settlement evidence is revalidated against its source archive and the contract normalization. Existing markets retain their committed rules. Run `npm run test:oracle` and see [docs/oracle-health.md](docs/oracle-health.md) for limits and operation.
+
+Football sources are wired separately: run `npm run oracle:football` for readiness, then configure the three server-side provider keys and exact fixture mappings described in [docs/football-oracles.md](docs/football-oracles.md). New football markets require exact full-time score agreement across all three providers. Existing football markets retain their original official-source rules.
+
 ## Current release status
 
 The local Arc lifecycle is exercised, including native USDC transfer/approval behavior, shared 6/18-decimal balance, restricted transfer rollback, claim recovery, two wallets, and cancellation. Public deployment, source verification, three genuine event markets, two funded trader-wallet receipts and browser acceptance are recorded under `deployments/arc-testnet-*.json`. The actual Coinbase candle closed at 82,583.69 USD; trader/sponsor claims paid exactly 3 USDC from 3 USDC deposited. A separate explicit recovery exercise expired and refunded exactly 2 USDC. The football markets retain 2 USDC backing, matching total liability.
