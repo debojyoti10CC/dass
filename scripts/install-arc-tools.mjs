@@ -38,9 +38,10 @@ const distro = process.env.ARC_WSL_DISTRO || 'Ubuntu';
 const linuxRoot = root.replace(/\\/g, '/').replace(/^([a-z]):/i, (_, drive) => `/mnt/${drive.toLowerCase()}`);
 if (process.platform === 'win32') await run('wsl.exe', ['-d', distro, '--cd', `${linuxRoot}/work/arc-foundry`, '--exec', 'tar', '-xzf', file]);
 else await run('tar', ['-xzf', file], directory);
-if (platform === 'linux' && arch === 'x86_64') {
-  const solc = await download('https://binaries.soliditylang.org/linux-amd64/solc-linux-amd64-v0.8.30+commit.73712a01');
-  const expectedSolc = 'f3e987dc6ecebd4bd350c48edcbc320b46cf9e3109bd3fc3d88f1acaf4c428f7';
+if ((platform === 'linux' && arch === 'x86_64') || platform === 'darwin') {
+  const compilerPlatform = platform === 'darwin' ? 'macosx-amd64' : 'linux-amd64';
+  const solc = await download(`https://binaries.soliditylang.org/${compilerPlatform}/solc-${compilerPlatform}-v0.8.30+commit.73712a01`);
+  const expectedSolc = platform === 'darwin' ? '738dcdc6afddeb505ee4e4ef24f1c1fdba2b8c924e614cbbf5801a5b062dd683' : 'f3e987dc6ecebd4bd350c48edcbc320b46cf9e3109bd3fc3d88f1acaf4c428f7';
   if (createHash('sha256').update(solc).digest('hex') !== expectedSolc) throw new Error('Solidity compiler checksum mismatch');
   await mkdir(join(root, 'work', 'solc'), { recursive: true });
   await writeFile(join(root, 'work', 'solc', 'solc-0.8.30'), solc, { mode: 0o755 });

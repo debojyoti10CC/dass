@@ -35,3 +35,28 @@ test('post-approval and submission checks retain their distinct failure messages
   await assert.rejects(withReadDeadline(new Promise(() => {}), 'Approval is confirmed; post-approval checks timed out', 20), /Approval is confirmed/);
   await assert.rejects(withReadDeadline(new Promise(() => {}), 'Forecast preparation timed out; no forecast requested', 20), /no forecast requested/);
 });
+
+import { validateEvidenceRules } from '../web/src/rules.ts';
+import { marketPageIds } from '../web/src/marketPage.ts';
+
+test('evidence must match every committed rule semantic', () => {
+  const rules = { source: 'source', field: 'close', observationAt: '2026-10-10T00:00:00Z', publicationPolicy: 'first', units: 'USD', normalization: { origin: '0', scale: '1' }, precision: '0.01', rounding: 'half away from zero' };
+  const evidence = { ...rules, rulesHash: `0x${'12'.repeat(32)}` };
+  validateEvidenceRules(evidence, rules, evidence.rulesHash);
+  validateEvidenceRules({ ...evidence, normalization: { scale: '1', origin: '0' } }, rules, evidence.rulesHash);
+  for (const field of Object.keys(evidence)) {
+    assert.throws(() => validateEvidenceRules({ ...evidence, [field]: 'wrong' }, rules, evidence.rulesHash), /match/);
+    const missing = { ...evidence }; delete missing[field];
+    assert.throws(() => validateEvidenceRules(missing, rules, evidence.rulesHash), /match/);
+  }
+  assert.throws(() => validateEvidenceRules(null, rules, evidence.rulesHash), /JSON object/);
+});
+
+test('market pages are bounded, descending, and cover every ID exactly once', () => {
+  const pages = [0, 1, 2].map(page => marketPageIds(43n, page));
+  assert.deepEqual(pages.map(page => page.length), [20, 20, 3]);
+  assert.deepEqual(pages.flat(), Array.from({ length: 43 }, (_, index) => 43n - BigInt(index)));
+  assert.deepEqual(marketPageIds(0n, 0), []);
+  assert.deepEqual(marketPageIds(43n, 3), []);
+  assert.throws(() => marketPageIds(43n, -1), /Invalid/);
+});

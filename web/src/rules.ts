@@ -44,3 +44,13 @@ export async function fetchRules(uri: string, commitment: Hash, signal?: AbortSi
     return { status: 'unavailable', error: `${error instanceof Error ? error.message : 'Rules could not be loaded.'} Claims and refunds use onchain records and remain available.` }
   }
 }
+
+export function validateEvidenceRules(value: unknown, document: RulesDocument, commitment: Hash): void {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) throw new Error('Evidence must be a JSON object.')
+  const doc = value as Record<string, unknown>
+  if (doc.rulesHash !== commitment) throw new Error('Evidence rulesHash must match the market commitment exactly.')
+  for (const field of ['source', 'field', 'observationAt', 'publicationPolicy', 'units', 'precision', 'rounding'] as const) {
+    if (doc[field] !== document[field]) throw new Error(`Evidence ${field} must match the committed rules exactly.`)
+  }
+  if (serializeRules(doc.normalization ?? null) !== serializeRules(document.normalization)) throw new Error('Evidence normalization must match the committed rules exactly.')
+}

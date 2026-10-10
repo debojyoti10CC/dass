@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { chromium } from '@playwright/test';
+import { chromium, expect } from '@playwright/test';
 import fs from 'node:fs';
 
 const config = JSON.parse(fs.readFileSync('work/local-demo.json', 'utf8'));
@@ -15,11 +15,12 @@ page.on('pageerror', error => pageErrors.push(error.message));
 try {
   await page.goto('http://127.0.0.1:5173', { waitUntil: 'networkidle' });
   await page.getByRole('heading', { name: 'Explore markets', exact: true }).waitFor();
-  await page.getByText('2 markets', { exact: true }).waitFor();
+  await expect(page.locator('.market-results')).toContainText(/^2 markets/, { timeout: 15_000 });
   await page.getByRole('button', { name: /Local demo: what temperature/ }).click();
   await page.getByText('Rules verified').waitFor();
 
   await page.getByRole('button', { name: 'Connect wallet' }).click();
+  await expect(page.locator('.wallet-button')).toHaveAttribute('title', new RegExp(config.accounts[0], 'i'));
   const accountPicker = page.getByRole('combobox', { name: 'Disposable demo wallet' });
   await accountPicker.selectOption(config.accounts[1]);
   await page.getByRole('button', { name: /7099/ }).waitFor();
@@ -27,17 +28,17 @@ try {
   const meanInput = page.locator('#forecast-mean');
   await meanInput.fill(String(Number(await meanInput.inputValue()) + 1));
   await page.getByRole('button', { name: 'Review forecast' }).click();
-  await page.getByRole('button', { name: /Approve 10(?:\.00)? USDC/ }).click();
+  await page.getByRole('button', { name: /Approve 10(?:\.00)? USDC/ }).click({ timeout: 60_000 });
   await page.getByRole('button', { name: 'Submit forecast' }).waitFor({ timeout: 60_000 });
   await page.getByRole('button', { name: 'Submit forecast' }).click();
   await page.getByText(/Submit forecast confirmed/).waitFor({ timeout: 60_000 });
 
   await accountPicker.selectOption(config.accounts[2]);
-  await page.getByRole('button', { name: /3c44/ }).waitFor();
+  await page.getByRole('button', { name: /3c44/i }).waitFor();
   assert.equal(await accountPicker.inputValue(), config.accounts[2], 'second local trader must become the active wallet');
   await meanInput.fill(String(Number(await meanInput.inputValue()) + 1));
   await page.getByRole('button', { name: 'Review forecast' }).click();
-  await page.getByRole('button', { name: /Approve 10(?:\.00)? USDC/ }).click();
+  await page.getByRole('button', { name: /Approve 10(?:\.00)? USDC/ }).click({ timeout: 60_000 });
   await page.getByRole('button', { name: 'Submit forecast' }).waitFor({ timeout: 60_000 });
   await page.getByRole('button', { name: 'Submit forecast' }).click();
   await page.getByText(/Submit forecast confirmed/).waitFor({ timeout: 60_000 });

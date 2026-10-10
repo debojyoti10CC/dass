@@ -10,7 +10,7 @@ export type Market = {
   deposited: bigint; paid: bigint; sponsorClaimed: boolean; evidenceHash: Hash;
 }
 export type Position = {
-  id: bigint; owner: Address; marketId: bigint; oldCurve: Curve; newCurve: Curve;
+  id: bigint; owner: Address; marketId: bigint; market: Market; oldCurve: Curve; newCurve: Curve;
   deposit: bigint; claimed: boolean; payout: bigint; claimable: boolean;
 }
 export type RulesDocument = {

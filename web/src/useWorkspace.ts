@@ -1,13 +1,14 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { decodeEventLog, type Address, type Hash } from 'viem'
 import { distributionMarketsAbi } from './contracts'
-import { balances, chain, connectWallet, contractAddress, injectedWallet, prepareCall, publicClient, readContract, readMarkets, readPositions, reconcileTransaction, sendPrepared, switchNetwork, walletProvider } from './chain'
+import { balances, chain, connectWallet, contractAddress, injectedWallet, prepareCall, publicClient, readContract, readMarkets, readSponsoredMarkets, readPositions, reconcileTransaction, sendPrepared, switchNetwork, walletProvider } from './chain'
 import { errorMessage, loadTransactions, pendingFor, saveTransactions, transactionContext } from './transactions'
 import type { Market, Position, TransactionRecord } from './types'
 
 export function useWorkspace() {
   const [account, setAccount] = useState<Address>(), [walletChainId, setWalletChainId] = useState<number>()
   const [markets, setMarkets] = useState<Market[]>([]), [positions, setPositions] = useState<Position[]>([])
+  const [marketPage, setMarketPage] = useState(0), [marketCount, setMarketCount] = useState(0n), [sponsoredMarkets, setSponsoredMarkets] = useState<Market[]>([])
   const [operator, setOperator] = useState<Address>(), [sponsorPayouts, setSponsorPayouts] = useState<Record<string, bigint>>({})
   const [funds, setFunds] = useState<{ native: bigint; token: bigint; allowance: bigint }>()
   const [transactions, setTransactions] = useState<TransactionRecord[]>(loadTransactions)
@@ -25,15 +26,18 @@ export function useWorkspace() {
     try {
       const block = await publicClient.getBlock()
       if (await publicClient.getChainId() !== chain.id) throw new Error('RPC chain does not match the deployment manifest.')
-      const nextMarkets = await readMarkets(block.number)
+      const result = await readMarkets(block.number, marketPage)
+      const nextMarkets = result.markets
+      setMarketCount(result.count)
       setMarkets(nextMarkets); setTimestamp(block.timestamp)
       setOperator(await readContract('operator', [], block.number) as Address)
       if (account) {
-        const [owned, nextFunds] = await Promise.all([readPositions(account, block.number), balances(account)])
+        const [owned, nextFunds, sponsored] = await Promise.all([readPositions(account, block.number), balances(account), readSponsoredMarkets(account, block.number)])
+        setSponsoredMarkets(sponsored)
         setPositions(owned); setFunds(nextFunds)
-        const payouts = await Promise.all(nextMarkets.filter(item => item.status !== 0 && !item.sponsorClaimed && item.sponsor.toLowerCase() === account.toLowerCase()).map(async item => [item.id.toString(), await readContract('previewSponsorClaim', [item.id], block.number) as bigint] as const))
+        const payouts = await Promise.all(sponsored.filter(item => item.status !== 0 && !item.sponsorClaimed && item.sponsor.toLowerCase() === account.toLowerCase()).map(async item => [item.id.toString(), await readContract('previewSponsorClaim', [item.id], block.number) as bigint] as const))
         setSponsorPayouts(Object.fromEntries(payouts))
-      } else { setPositions([]); setFunds(undefined); setSponsorPayouts({}) }
+      } else { setPositions([]); setSponsoredMarkets([]); setFunds(undefined); setSponsorPayouts({}) }
       setError('')
     } catch (failure) { setError(errorMessage(failure)) }
     finally {
@@ -41,7 +45,7 @@ export function useWorkspace() {
       const next = queuedRefresh.current; queuedRefresh.current = undefined
       if (next) void next()
     }
-  }, [account])
+  }, [account, marketPage])
 
   useEffect(() => {
     void refresh()
@@ -120,6 +124,6 @@ export function useWorkspace() {
     try { const prepared = await prepareCall(account, functionName, args, deposit); return await submitRequest(action, prepared.request, marketId, receiptId) }
     catch (failure) { setError(errorMessage(failure)); return undefined }
   }
-  return { account, walletChainId, markets, positions, operator, sponsorPayouts, funds, transactions, busy, submission, loading, error, notice, timestamp, pending, wrongNetwork, refresh, reconcile, connect, switchChain, execute, submitRequest, setError, setNotice }
+  return { account, walletChainId, markets, sponsoredMarkets, marketPage, marketCount, setMarketPage, positions, operator, sponsorPayouts, funds, transactions, busy, submission, loading, error, notice, timestamp, pending, wrongNetwork, refresh, reconcile, connect, switchChain, execute, submitRequest, setError, setNotice }
 }
 export type Workspace = ReturnType<typeof useWorkspace>

@@ -14,7 +14,7 @@
     "check": "npm run check --workspace web",
     "preview": "npm run preview --workspace web",
     "contracts:build": "node scripts/compile.mjs",
-    "test:reference": "python reference/model.py --check",
+    "test:reference": "python3 reference/model.py --check",
     "test:contracts": "node --test --test-concurrency=1 test/contracts.test.mjs",
     "test:browser": "node test/browser-smoke.mjs",
     "test": "npm run test:reference && npm run test:contracts && npm run test:forge && npm run test:review",
@@ -44,7 +44,7 @@
     "security:scan": "node scripts/security-scan.mjs",
     "release:gate": "node scripts/release-gate.mjs",
     "deploy:mainnet": "node scripts/deploy-public.mjs --network arc-mainnet",
-    "source:package": "python scripts/package-source.py"
+    "source:package": "python3 scripts/package-source.py"
   },
   "devDependencies": {
     "@openzeppelin/contracts": "5.4.0",

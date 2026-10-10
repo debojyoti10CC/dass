@@ -4,6 +4,7 @@ import {
 } from 'viem'
 import { deployment, distributionMarketsAbi } from './contracts'
 import type { Curve, Market, Position, TransactionRecord } from './types'
+import { marketPageIds } from './marketPage'
 import { localDemoEnabled, localProvider } from './localWallet'
 
 export const chain = defineChain({
@@ -101,16 +102,18 @@ export async function readMarket(id: bigint, blockNumber?: bigint): Promise<Mark
 type EventRecord = { args: Record<string, unknown>; transactionHash: Hash; logIndex: number; blockNumber: bigint }
 const eventHistory = new Map<string, { next: bigint; records: Map<string, EventRecord>; running?: Promise<void> }>()
 /** Scan each confirmed range once; share concurrent scans and advance only after successful reads. */
-async function eventLogs(eventName: string, toBlock: bigint) {
-  let history = eventHistory.get(eventName)
-  if (!history) { history = { next: BigInt(deployment.deploymentBlock ?? 0), records: new Map() }; eventHistory.set(eventName, history) }
+// shortcut: first loads scan deployment block ranges; add an indexer when chain age makes these requests slow.
+async function eventLogs(eventName: string, toBlock: bigint, args: Record<string, Address | bigint> = {}) {
+  const key = `${eventName}:${JSON.stringify(args, (_, value) => typeof value === 'bigint' ? value.toString() : value)}`
+  let history = eventHistory.get(key)
+  if (!history) { history = { next: BigInt(deployment.deploymentBlock ?? 0), records: new Map() }; eventHistory.set(key, history) }
   if (history.running) await history.running
   if (history.next > toBlock) return [...history.records.values()].filter(log => log.blockNumber <= toBlock)
   const current = history
   current.running = (async () => {
     while (current.next <= toBlock) {
       const end = current.next + 4999n < toBlock ? current.next + 4999n : toBlock
-      const logs = await publicClient.getContractEvents({ address: addressRequired(), abi, eventName, fromBlock: current.next, toBlock: end })
+      const logs = await publicClient.getContractEvents({ address: addressRequired(), abi, eventName, args, fromBlock: current.next, toBlock: end })
       for (const log of logs) {
         if (log.transactionHash === null || log.logIndex === null || log.blockNumber === null) continue
         current.records.set(`${log.transactionHash}:${log.logIndex}`, { args: (log as unknown as { args: Record<string, unknown> }).args, transactionHash: log.transactionHash, logIndex: log.logIndex, blockNumber: log.blockNumber })
@@ -121,31 +124,32 @@ async function eventLogs(eventName: string, toBlock: bigint) {
   try { await current.running } finally { current.running = undefined }
   return [...current.records.values()].filter(log => log.blockNumber <= toBlock)
 }
-export async function readMarkets(blockNumber: bigint): Promise<Market[]> {
-  // IDs are contiguous and immutable; the contract's counter avoids a discovery history scan.
+export async function readMarkets(blockNumber: bigint, page = 0): Promise<{ markets: Market[]; count: bigint }> {
   const count = integer(await readContract('marketCount', [], blockNumber), 'marketCount')
-  const markets: Market[] = []
-  for (let start = 1n; start <= count; start += 20n) {
-    const ids: bigint[] = []
-    for (let id = start; id <= count && id < start + 20n; id++) ids.push(id)
-    markets.push(...await Promise.all(ids.map(id => readMarket(id, blockNumber))))
-  }
-  return markets.reverse()
+  const ids = marketPageIds(count, page)
+  return { markets: await Promise.all(ids.map(id => readMarket(id, blockNumber))), count }
+}
+export async function readSponsoredMarkets(account: Address, blockNumber: bigint): Promise<Market[]> {
+  const logs = await eventLogs('MarketCreated', blockNumber, { sponsor: account })
+  return Promise.all(logs.map(log => readMarket(integer(log.args.marketId, 'marketId'), blockNumber)))
 }
 export async function readForecastEvents(marketId: bigint) {
   const blockNumber = await publicClient.getBlockNumber()
-  const logs = await eventLogs('CurveChanged', blockNumber)
+  const logs = await eventLogs('CurveChanged', blockNumber, { marketId })
   return logs.filter(log => integer(log.args.marketId, 'marketId') === marketId).slice(-20).reverse().map(log => ({ hash: log.transactionHash, owner: log.args.owner as Address, receiptId: integer(log.args.receiptId, 'receiptId'), deposit: integer(log.args.deposit, 'deposit') }))
 }
 export async function readPositions(account: Address, blockNumber: bigint): Promise<Position[]> {
-  const [logs, claims] = await Promise.all([eventLogs('CurveChanged', blockNumber), eventLogs('PositionClaimed', blockNumber)])
+  const [logs, claims] = await Promise.all([eventLogs('CurveChanged', blockNumber, { owner: account }), eventLogs('PositionClaimed', blockNumber, { owner: account })])
   const claimedAmounts = new Map(claims.map(log => [integer(log.args.receiptId, 'receiptId'), integer(log.args.amount, 'amount')]))
   const ids = [...new Set(logs.filter(log => String(log.args.owner).toLowerCase() === account.toLowerCase()).map(log => integer(log.args.receiptId, 'receiptId')))]
+  const markets = new Map<bigint, Promise<Market>>()
   return Promise.all(ids.reverse().map(async id => {
     const item = record(await readContract('getReceipt', [id], blockNumber))
-    const marketId = integer(item.marketId, 'marketId'), market = await readMarket(marketId, blockNumber)
+    const marketId = integer(item.marketId, 'marketId')
+    if (!markets.has(marketId)) markets.set(marketId, readMarket(marketId, blockNumber))
+    const market = await markets.get(marketId)!
     const payout = item.claimed ? claimedAmounts.get(id) ?? 0n : market.status !== 0 ? await readContract('previewClaim', [id], blockNumber) as bigint : 0n
-    return { id, owner: item.owner as Address, marketId, oldCurve: curve(item.oldCurve), newCurve: curve(item.newCurve), deposit: integer(item.deposit, 'deposit'), claimed: Boolean(item.claimed), payout, claimable: market.status !== 0 && !item.claimed }
+    return { id, owner: item.owner as Address, marketId, market, oldCurve: curve(item.oldCurve), newCurve: curve(item.newCurve), deposit: integer(item.deposit, 'deposit'), claimed: Boolean(item.claimed), payout, claimable: market.status !== 0 && !item.claimed }
   }))
 }
 export async function verifyNetwork(account: Address): Promise<void> {
