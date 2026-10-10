@@ -19,7 +19,12 @@ export function pendingFor(records: TransactionRecord[], account: string | undef
 }
 export function errorMessage(error: unknown): string {
   const item = error as { code?: number; shortMessage?: string; message?: string; cause?: { code?: number } }
-  if (item?.code === 4001 || item?.cause?.code === 4001 || /user rejected|user denied/i.test(item?.message ?? '')) return 'Wallet request rejected. No transaction was submitted.'
-  if (item?.code === -32005 || item?.cause?.code === -32005 || /rate limit|exceeds defined limit/i.test(item?.message ?? '')) return 'Arc RPC is temporarily rate-limiting requests. Wait a moment and refresh or prepare the review again.'
+  if (item?.message?.includes('No transaction hash was returned.')) return item.message
+  const causes: { code?: number; message?: string }[] = []
+  let cause: unknown = error
+  while (cause && typeof cause === 'object' && causes.length < 8 && !causes.includes(cause)) { causes.push(cause); cause = (cause as { cause?: unknown }).cause }
+  if (causes.some(value => value.code === 4001 || /user rejected|user denied/i.test(value.message ?? ''))) return 'Wallet request rejected. No transaction was submitted.'
+  if (causes.some(value => value.code === -32002 || /request.*already pending/i.test(value.message ?? ''))) return 'Your wallet already has a pending request. Open your wallet and approve or reject that request before trying again.'
+  if (causes.some(value => value.code === -32005 || /rate limit|exceeds defined limit/i.test(value.message ?? ''))) return 'Your wallet or Arc RPC is temporarily rate-limiting requests. Wait a moment and review again.'
   return item?.shortMessage ?? item?.message ?? 'The operation could not be completed.'
 }

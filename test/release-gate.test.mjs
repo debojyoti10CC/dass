@@ -37,6 +37,11 @@ test('Refund mismatch and missing production browser proof block mainnet', () =>
 test('Untriaged findings block mainnet even when the scan succeeded', () => {
   jsonMutation('deployments/arc-testnet-security-evidence.json', value => { value.untriagedFindings = 1; }, () => assert.throws(() => collectReleaseEvidence(temporary)));
 });
+
+test('Failed approval recovery or stale approval UI evidence blocks mainnet', () => {
+  jsonMutation('deployments/arc-testnet-approval-evidence.json', value => { value.passed = false; }, () => assert.throws(() => collectReleaseEvidence(temporary), /Approval and unknown-transaction recovery/));
+  jsonMutation('deployments/arc-testnet-approval-evidence.json', value => { value.webSourceFiles['web/src/App.tsx'] = 'changed'; }, () => assert.throws(() => collectReleaseEvidence(temporary), /Frontend changed after approval recovery/));
+});
 test('Changed evidence must be explicitly evaluated and recorded again', () => {
   jsonMutation('deployments/arc-testnet-browser-evidence.json', value => { value.checkedAt = 'changed'; }, () => assert.throws(() => assertMainnetReleaseGate({ root: temporary }), /Evidence changed/));
 });

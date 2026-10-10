@@ -12,6 +12,8 @@ export function useWorkspace() {
   const [funds, setFunds] = useState<{ native: bigint; token: bigint; allowance: bigint }>()
   const [transactions, setTransactions] = useState<TransactionRecord[]>(loadTransactions)
   const transactionRef = useRef(transactions), [busy, setBusy] = useState(false), [loading, setLoading] = useState(Boolean(contractAddress))
+  const submissionLock = useRef(false)
+  const [submission, setSubmission] = useState<{ action: string; stage: 'wallet' | 'confirmation'; hash?: Hash; delayed?: boolean }>()
   const [error, setError] = useState(''), [notice, setNotice] = useState(''), [timestamp, setTimestamp] = useState(BigInt(Math.floor(Date.now() / 1000)))
   const refreshRunning = useRef(false)
   const queuedRefresh = useRef<(() => Promise<void>) | undefined>(undefined)
@@ -76,10 +78,16 @@ export function useWorkspace() {
   const pending = pendingFor(transactions, account, chain.id)
   const wrongNetwork = Boolean(account && walletChainId !== chain.id)
   const submitRequest = async (action: string, request: Parameters<typeof sendPrepared>[0], marketId?: bigint, receiptId?: bigint): Promise<TransactionRecord | undefined> => {
-    if (!account || wrongNetwork || pending || busy) throw new Error('Connect to the configured network and reconcile any outstanding transaction before sending another.')
-    setBusy(true); setError(''); setNotice('Confirm the transaction in your wallet.')
+    if (!account || wrongNetwork || pendingFor(transactionRef.current, account, chain.id) || submissionLock.current) throw new Error('Connect to the configured network and reconcile any outstanding transaction before sending another.')
+    submissionLock.current = true
+    setBusy(true); setSubmission({ action, stage: 'wallet' }); setError(''); setNotice('Confirm the transaction in your wallet.')
+    const walletTimer = setTimeout(() => {
+      setSubmission(current => current?.stage === 'wallet' ? { ...current, delayed: true } : current)
+      setNotice('Your wallet has not returned a transaction hash yet. Open your wallet and approve or reject its pending request. This app will not send another transaction while it is waiting.')
+    }, 30000)
     try {
       const hash: Hash = await sendPrepared(request)
+      clearTimeout(walletTimer); setSubmission({ action, stage: 'confirmation', hash })
       const item: TransactionRecord = { id: `${chain.id}:${hash}`, hash, chainId: chain.id, deploymentContext: transactionContext, account, action, marketId: marketId?.toString(), receiptId: receiptId?.toString(), createdAt: Date.now(), state: 'pending' }
       updateTransactions([...transactionRef.current, item]); setNotice('Transaction submitted. Waiting for confirmation; do not submit a duplicate.')
       let settled: TransactionRecord
@@ -96,18 +104,22 @@ export function useWorkspace() {
         }
       } catch { settled = { ...item, state: 'unknown' } }
       updateTransactions(transactionRef.current.map(value => value.id === item.id ? settled : value))
-      if (settled.state === 'confirmed') { setNotice(`${action} confirmed${settled.receiptId ? ` · receipt #${settled.receiptId}` : settled.marketId ? ` · market #${settled.marketId}` : ''}. Onchain records have been refreshed.`); await refresh() }
+      if (settled.state === 'confirmed') { setNotice(`${action} confirmed${settled.receiptId ? ` · receipt #${settled.receiptId}` : settled.marketId ? ` · market #${settled.marketId}` : ''}. Refreshing onchain records.`); void refresh() }
       else if (settled.state === 'reverted') setError(`${action} reverted onchain. No state change from that transaction was applied; the network fee may still be charged.`)
       else setNotice('Transaction status is unknown. Reconcile the hash before taking another action; a timeout does not establish failure.')
       return settled
-    } catch (failure) { setError(errorMessage(failure)); setNotice(''); return undefined }
-    finally { setBusy(false) }
+    } catch (failure) {
+      const message = errorMessage(failure)
+      const detail = /Wallet request rejected/.test(message) ? message : `${message} No transaction hash was returned. Check your wallet activity before trying again.`
+      setError(detail); setNotice(''); throw new Error(detail, { cause: failure })
+    }
+    finally { clearTimeout(walletTimer); submissionLock.current = false; setBusy(false); setSubmission(undefined) }
   }
   const execute = async (action: string, functionName: string, args: readonly unknown[], deposit = 0n, marketId?: bigint, receiptId?: bigint) => {
     if (!account) { setError('Connect your wallet first.'); return }
     try { const prepared = await prepareCall(account, functionName, args, deposit); return await submitRequest(action, prepared.request, marketId, receiptId) }
     catch (failure) { setError(errorMessage(failure)); return undefined }
   }
-  return { account, walletChainId, markets, positions, operator, sponsorPayouts, funds, transactions, busy, loading, error, notice, timestamp, pending, wrongNetwork, refresh, reconcile, connect, switchChain, execute, submitRequest, setError, setNotice }
+  return { account, walletChainId, markets, positions, operator, sponsorPayouts, funds, transactions, busy, submission, loading, error, notice, timestamp, pending, wrongNetwork, refresh, reconcile, connect, switchChain, execute, submitRequest, setError, setNotice }
 }
 export type Workspace = ReturnType<typeof useWorkspace>

@@ -174,9 +174,10 @@ export async function prepareCall(account: Address, functionName: string, args: 
     publicClient.estimateFeesPerGas(), balances(account),
   ])
   const gas = await publicClient.estimateContractGas({ address: addressRequired(), abi, functionName, args, account })
-  const gasReserve = (gas * (fee.maxFeePerGas ?? fee.gasPrice ?? 0n) * 120n + 99n) / 100n
+  const gasLimit = (gas * 120n + 99n) / 100n
+  const gasReserve = gasLimit * (fee.maxFeePerGas ?? fee.gasPrice ?? 0n)
   if (balance.token < deposit || balance.native < deposit * 10n ** 12n + gasReserve) throw new Error(`Insufficient shared USDC balance for the ${Number(deposit) / 1e6} USDC deposit plus the fee reserve. Deposit units use 6 decimals; gas units use 18 decimals.`)
-  return { request: simulation.request, gasReserve, gas, nonce: await publicClient.getTransactionCount({ address: account, blockTag: 'pending' }) }
+  return { request: { ...simulation.request, gas: gasLimit, ...fee }, gasReserve, gas, nonce: await publicClient.getTransactionCount({ address: account, blockTag: 'pending' }) }
 }
 export async function prepareApproval(account: Address, amount: bigint) {
   await verifyNetwork(account)
@@ -187,9 +188,10 @@ export async function prepareApproval(account: Address, amount: bigint) {
     publicClient.estimateFeesPerGas(), balances(account),
   ])
   // A provisional trade reserve is replaced with the actual estimate after approval.
-  const gasReserve = ((gas + 700000n) * (fee.maxFeePerGas ?? fee.gasPrice ?? 0n) * 120n + 99n) / 100n
+  const gasLimit = (gas * 120n + 99n) / 100n
+  const gasReserve = (gasLimit + 840000n) * (fee.maxFeePerGas ?? fee.gasPrice ?? 0n)
   if (balance.token < amount || balance.native < amount * 10n ** 12n + gasReserve) throw new Error(`Not enough shared USDC for collateral and transaction fees. ${chain.id === 5042002 ? 'Add Arc Testnet USDC from the Circle faucet.' : 'Fund your wallet with USDC on Arc Mainnet.'}`)
-  return { request: simulation.request, gasReserve }
+  return { request: { ...simulation.request, gas: gasLimit, ...fee }, gasReserve }
 }
 export type PreparedRequest = { address: Address; abi: Abi; functionName: string; args?: readonly unknown[]; account?: unknown; [key: string]: unknown }
 export async function sendPrepared(request: PreparedRequest): Promise<Hash> {

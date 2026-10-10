@@ -21,6 +21,7 @@
     "test:review": "node --experimental-strip-types --test test/review.test.mjs",
     "test:review:browser": "node test/review-browser.mjs",
     "test:funding:browser": "node test/funding-browser.mjs",
+    "test:approval:browser": "node test/approval-browser.mjs",
     "tools:arc": "node scripts/install-arc-tools.mjs",
     "node:arc": "node scripts/arc-node.mjs",
     "smoke:arc": "node scripts/arc-smoke.mjs",

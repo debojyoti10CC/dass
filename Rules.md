@@ -49,6 +49,7 @@ Resolved and cancelled states never transition again. At the resolution deadline
 - Use ERC-20 USDC for deposits/payouts. Use six decimals for these amounts and 18 decimals for native gas estimates. Never mix raw units.
 - Use exact required approvals; do not default to unlimited allowance.
 - Keep enough shared USDC balance for fees as well as collateral; estimate again after approval.
+- Pass the freshly simulated gas limit and estimated fees to the wallet. Bound read-only approval/submission preparation and post-approval checks; keep their failures visible beside the forecast action. Wallet wait advisories must not imply failure, permit another send, or discard a late hash. Receipt timeouts remain unknown until reconciled.
 - Use safe token calls, checks/effects/interactions, and reentrancy protection. Failed transfers revert flags and accounting.
 - No loops over all receipts during settlement or claiming. Claiming one receipt must perform bounded work.
 - No private keys, secrets, or privileged server signatures in browser bundles or tracked files.

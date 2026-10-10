@@ -237,6 +237,9 @@ dl { margin: 0; } dt { color: var(--body); } dd { margin: 0; overflow-wrap: anyw
 .sandbox-disclosure strong { font-size: 14px; }
 .sandbox-disclosure p { font-size: 12px; color: var(--body); margin: 8px 0 0; }
 .inline-error { font-size: 14px; line-height: 1.5; }
+.review-recovery { margin-top: 16px; border: 1px solid var(--hairline); border-radius: 12px; padding: 16px; font-size: 14px; }
+.review-recovery p { font-size: 14px; margin-bottom: 12px; }
+.review-recovery > a { display: block; }
 .review-progress { font-size: 14px; color: var(--body); background: var(--soft); border-radius: 12px; padding: 12px; margin: 12px 0; }
 .review-error { margin: 14px 0; }
 .trade-review { background: var(--soft); padding: 20px; border-radius: 16px; margin: 16px 0; }

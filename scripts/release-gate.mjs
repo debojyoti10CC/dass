@@ -5,7 +5,7 @@ import { createHash } from 'node:crypto';
 import { keccak256 } from 'viem';
 
 export const digest = bytes => createHash('sha256').update(bytes).digest('hex');
-const evidenceNames = ['arc-testnet.json', 'arc-testnet-deployment-evidence.json', 'arc-testnet-verification-evidence.json', 'arc-testnet-test-evidence.json', 'arc-testnet-security-evidence.json', 'arc-testnet-acceptance-evidence.json', 'arc-testnet-resolution-evidence.json', 'arc-testnet-expiry-evidence.json', 'arc-testnet-browser-evidence.json', 'arc-testnet-build-evidence.json', 'arc-testnet-review-evidence.json', 'arc-testnet-rpc-evidence.json'];
+const evidenceNames = ['arc-testnet.json', 'arc-testnet-deployment-evidence.json', 'arc-testnet-verification-evidence.json', 'arc-testnet-test-evidence.json', 'arc-testnet-security-evidence.json', 'arc-testnet-acceptance-evidence.json', 'arc-testnet-resolution-evidence.json', 'arc-testnet-expiry-evidence.json', 'arc-testnet-browser-evidence.json', 'arc-testnet-build-evidence.json', 'arc-testnet-review-evidence.json', 'arc-testnet-rpc-evidence.json', 'arc-testnet-approval-evidence.json'];
 export function webFingerprints(root = '.') {
   const files = ['web/package.json', 'web/index.html', 'web/vite.config.ts', 'package-lock.json'];
   function walk(directory) {
@@ -27,7 +27,7 @@ export function webFingerprints(root = '.') {
 /** Technical testnet prerequisite, not an independent audit or financial approval. */
 export function collectReleaseEvidence(root = '.') {
   const read = file => JSON.parse(fs.readFileSync(path.join(root, 'deployments', file), 'utf8'));
-  const [manifest, deployment, verification, tests, security, acceptance, resolution, expiry, browser, build, review, rpc] = evidenceNames.map(read);
+  const [manifest, deployment, verification, tests, security, acceptance, resolution, expiry, browser, build, review, rpc, approval] = evidenceNames.map(read);
   const address = manifest.address?.toLowerCase();
   assert.equal(manifest.chainId, 5042002, 'Public Arc Testnet required');
   assert.equal(manifest.status, 'deployed');
@@ -75,6 +75,10 @@ export function collectReleaseEvidence(root = '.') {
   assert.equal(review.contract.toLowerCase(), address);
   assert.equal(review.chainId, manifest.chainId);
   assert.deepEqual(review.webSourceFiles, webFingerprints(root), 'Frontend changed after review recovery checks');
+  assert.equal(approval.passed, true, 'Approval and unknown-transaction recovery must pass');
+  assert.equal(approval.contract.toLowerCase(), address);
+  assert.equal(approval.chainId, manifest.chainId);
+  assert.deepEqual(approval.webSourceFiles, webFingerprints(root), 'Frontend changed after approval recovery checks');
   assert.equal(rpc.passed, true);
   assert.equal(rpc.chainId, manifest.chainId);
   assert.equal(rpc.contract.toLowerCase(), address);

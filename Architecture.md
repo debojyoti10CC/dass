@@ -88,6 +88,8 @@ Expose enough getters for market details, receipts, and claim previews. Events c
 
 Cache public records locally; cache is disposable. Browser local storage may retain transaction hash, chain ID, wallet, and intended action for reconciliation, never private keys. “Unknown” transactions must be checked by hash and contract events before another submission is suggested.
 
+Forecast review, approval preparation, forecast preparation, and post-approval checks each bound read/simulation work to 35 seconds. A late preparation result cannot start signing. The workspace owns a synchronous send lock and separate wallet/receipt stages. A 30-second wallet wait only advises the user to open their wallet; it keeps the request blocked until a hash or error arrives. Receipt timeout preserves unknown state, with its hash and reconciliation action visible in the editor. Confirmed submission returns before background discovery refresh. Prepared gas with a 20% reserve and estimated fees are passed to the wallet; failures remain local to the forecast action across background reads.
+
 Index dapp events rather than deriving receipts from token transfers. Observe [Arc runtime differences](https://docs.arc.io/arc/references/evm-differences.md), including transfer restrictions and receipt behavior.
 
 ## Rules and evidence availability
