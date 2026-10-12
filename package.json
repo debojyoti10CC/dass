@@ -17,8 +17,9 @@
     "test:reference": "python3 reference/model.py --check",
     "test:contracts": "node --test --test-concurrency=1 test/contracts.test.mjs",
     "test:browser": "node test/browser-smoke.mjs",
+    "test:landing": "node test/landing-browser.mjs",
     "test": "npm run test:reference && npm run test:contracts && npm run test:forge && npm run test:review && npm run test:oracle",
-    "test:oracle": "node --test test/oracle-health.test.mjs test/football-oracle.test.mjs",
+    "test:oracle": "node --test test/oracle-health.test.mjs test/chainlink-oracle.test.mjs test/btc-direction.test.mjs test/browser-chainlink-e2e.test.mjs test/football-oracle.test.mjs",
     "oracle:football": "node scripts/check-football-health.mjs",
     "resolve:football": "node scripts/resolve-football.mjs",
     "oracle:health": "node scripts/check-oracle-health.mjs",
@@ -40,6 +41,7 @@
     "deploy:testnet": "node scripts/deploy-public.mjs --network arc-testnet",
     "markets:testnet": "node scripts/real-markets.mjs --network arc-testnet",
     "test:public": "node scripts/testnet-acceptance.mjs",
+    "test:public:chainlink": "node scripts/browser-chainlink-e2e.mjs",
     "test:public:browser": "node test/public-browser.mjs",
     "resolve:testnet": "node scripts/resolve-coinbase.mjs --network arc-testnet",
     "verify:testnet": "node scripts/verify-public.mjs --network arc-testnet",
@@ -48,7 +50,9 @@
     "security:scan": "node scripts/security-scan.mjs",
     "release:gate": "node scripts/release-gate.mjs",
     "deploy:mainnet": "node scripts/deploy-public.mjs --network arc-mainnet",
-    "source:package": "python3 scripts/package-source.py"
+    "source:package": "python3 scripts/package-source.py",
+    "test:btc:browser": "node test/btc-direction-browser.mjs",
+    "test:public:btc": "node scripts/browser-chainlink-e2e.mjs --direction"
   },
   "devDependencies": {
     "@openzeppelin/contracts": "5.4.0",

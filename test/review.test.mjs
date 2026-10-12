@@ -36,7 +36,7 @@ test('post-approval and submission checks retain their distinct failure messages
   await assert.rejects(withReadDeadline(new Promise(() => {}), 'Forecast preparation timed out; no forecast requested', 20), /no forecast requested/);
 });
 
-import { validateEvidenceRules } from '../web/src/rules.ts';
+import { validateEvidenceRules, validateRules } from '../web/src/rules.ts';
 import { marketPageIds } from '../web/src/marketPage.ts';
 
 test('evidence must match every committed rule semantic', () => {
@@ -50,6 +50,26 @@ test('evidence must match every committed rule semantic', () => {
     assert.throws(() => validateEvidenceRules(missing, rules, evidence.rulesHash), /match/);
   }
   assert.throws(() => validateEvidenceRules(null, rules, evidence.rulesHash), /JSON object/);
+});
+
+test('BTC direction rules and evidence preserve the window and binary settlement semantics', () => {
+  const rules = {
+    question: 'BTC up or down', source: 'https://example.test/feed', field: 'BTC/USD answer',
+    observationAt: '2026-10-12T00:05:00Z', publicationPolicy: 'First confirmed sample', units: 'BTC direction',
+    normalization: { origin: '0', scale: '1' }, precision: 'Binary', rounding: 'No rounding',
+    missingData: 'Cancel at expiry', evidencePolicy: 'Archive source rounds',
+    kind: 'btc-five-minute-direction', windowStart: '2026-10-12T00:00:00Z', windowEnd: '2026-10-12T00:05:00Z',
+    earliestRetrievalAt: '2026-10-12T00:05:00Z', tiePolicy: 'Up when end price is equal to or greater than start price; Down only when lower.',
+    binaryOutcomes: [{ outcome: 'Down', value: '0' }, { outcome: 'Up', value: '1' }],
+  };
+  validateRules(rules);
+  const commitment = `0x${'34'.repeat(32)}`;
+  const evidence = { ...rules, rulesHash: commitment };
+  validateEvidenceRules(evidence, rules, commitment);
+  for (const [field, value] of [['windowEnd', '2026-10-12T00:06:00Z'], ['tiePolicy', 'ties Down'], ['binaryOutcomes', [{ outcome: 'Up', value: '0' }]]]) {
+    assert.throws(() => validateRules({ ...rules, [field]: value }), /BTC direction/);
+    assert.throws(() => validateEvidenceRules({ ...evidence, [field]: value }, rules, commitment), /match/);
+  }
 });
 
 test('market pages are bounded, descending, and cover every ID exactly once', () => {

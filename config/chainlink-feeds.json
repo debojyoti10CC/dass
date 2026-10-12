@@ -1,0 +1,4 @@
+{
+  "arc-testnet": { "chainId": 5042, "settlementChainId": 5042002, "address": "0xa109B535C70C8Be9995be64Bb6751AcDB27e03De", "decimals": 8, "maxAgeSeconds": 86400 },
+  "arc-mainnet": { "chainId": 5042, "address": "0xa109B535C70C8Be9995be64Bb6751AcDB27e03De", "decimals": 8, "maxAgeSeconds": 86400 }
+}

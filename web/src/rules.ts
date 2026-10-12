@@ -10,6 +10,19 @@ function sorted(value: unknown): unknown {
 export function serializeRules(value: unknown): string { return JSON.stringify(sorted(value)) }
 export function rulesHash(value: unknown): Hash { return keccak256(toBytes(serializeRules(value))) }
 
+function validateDirectionRules(doc: Record<string, unknown>): void {
+  if (doc.kind !== 'btc-five-minute-direction') return
+  const timestamp = (value: unknown, key: string) => {
+    if (typeof value !== 'string' || !/^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(?:\.\d+)?Z$/.test(value) || !Number.isFinite(Date.parse(value))) throw new Error(`BTC direction rules need a valid UTC ${key}.`)
+    return Date.parse(value)
+  }
+  const start = timestamp(doc.windowStart, 'windowStart'), end = timestamp(doc.windowEnd, 'windowEnd')
+  if (end - start !== 300_000 || doc.observationAt !== doc.windowEnd || doc.earliestRetrievalAt !== doc.windowEnd) throw new Error('BTC direction rules must define one five-minute window ending at the observation and retrieval time.')
+  if (doc.units !== 'BTC direction' || doc.tiePolicy !== 'Up when end price is equal to or greater than start price; Down only when lower.' || serializeRules(doc.binaryOutcomes) !== serializeRules([{ outcome: 'Down', value: '0' }, { outcome: 'Up', value: '1' }])) throw new Error('BTC direction outcomes or tie policy are invalid.')
+  const normalization = doc.normalization as Record<string, unknown> | undefined
+  if (normalization?.origin !== '0' || normalization.scale !== '1') throw new Error('BTC direction normalization must map Down to 0 and Up to 1.')
+}
+
 export function validateRules(value: unknown): RulesDocument {
   if (!value || typeof value !== 'object' || Array.isArray(value)) throw new Error('Rules must be a JSON object.')
   const doc = value as Record<string, unknown>
@@ -19,6 +32,7 @@ export function validateRules(value: unknown): RulesDocument {
   if (!/^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(?:\.\d+)?Z$/.test(doc.observationAt as string) || !Number.isFinite(Date.parse(doc.observationAt as string))) throw new Error('observationAt must be a valid UTC ISO timestamp ending in Z.')
   const normalization = doc.normalization as Record<string, unknown> | undefined
   if (!normalization || typeof normalization.origin !== 'string' || typeof normalization.scale !== 'string' || !/^-?\d+(\.\d{1,18})?$/.test(normalization.origin) || !/^\d+(\.\d{1,18})?$/.test(normalization.scale) || !(Number(normalization.scale) > 0)) throw new Error('Rules need decimal-string normalization.origin and a positive normalization.scale, with at most 18 decimal places.')
+  validateDirectionRules(doc)
   return doc as RulesDocument
 }
 
@@ -51,6 +65,9 @@ export function validateEvidenceRules(value: unknown, document: RulesDocument, c
   if (doc.rulesHash !== commitment) throw new Error('Evidence rulesHash must match the market commitment exactly.')
   for (const field of ['source', 'field', 'observationAt', 'publicationPolicy', 'units', 'precision', 'rounding'] as const) {
     if (doc[field] !== document[field]) throw new Error(`Evidence ${field} must match the committed rules exactly.`)
+  }
+  if (document.kind === 'btc-five-minute-direction') for (const field of ['kind', 'windowStart', 'windowEnd', 'earliestRetrievalAt', 'tiePolicy', 'binaryOutcomes'] as const) {
+    if (serializeRules(doc[field] ?? null) !== serializeRules(document[field] ?? null)) throw new Error(`Evidence ${field} must match the committed rules exactly.`)
   }
   if (serializeRules(doc.normalization ?? null) !== serializeRules(document.normalization)) throw new Error('Evidence normalization must match the committed rules exactly.')
 }

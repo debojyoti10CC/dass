@@ -1,5 +1,7 @@
 # DAZZ Markets on Arc
 
+The main page is a scroll-driven project introduction: follow a forecast through curve changes, fixed collateral, and settlement, then explore the codebase map. Choose **Open markets** to enter the trading app at `?view=markets`. The landing illustrations use approximate example values, never live market records. Run `npm run test:landing` against a web preview on port 5180 to check the scroll story, navigation, settlement example, and mobile layout.
+
 DAZZ Markets is an end-to-end implementation of the continuous Gaussian distribution market in [Dave White's Paradigm paper](https://www.paradigm.xyz/writing/distribution-markets), deployed and source-verified on public Arc Testnet. Traders move an expected numeric outcome and uncertainty; the sponsor keeps the initial curve's value. Each change deposits the market's fixed `b` USDC. Individual receipts settle at a normalized scalar outcome. A trusted resolver, immutable hashed rules, UTC deadlines, and permissionless expiry cancellation determine finality.
 
 Public contract: [0xc613bca497257cfec8d1754e1d81136cb9862ca8](https://explorer.testnet.arc.io/address/0xc613bca497257cfec8d1754e1d81136cb9862ca8?tab=contract). Real markets cover Premier League total goals and an exact Coinbase BTC/USD candle. Run `npm ci` and `npm run dev` to use this deployment with your own injected EVM wallet. The app never holds wallet private keys.
@@ -39,7 +41,7 @@ For a real-browser wallet-to-receipt smoke, start `npm run demo` and run `npm ru
 
 ## Oracle health
 
-Run `npm run oracle:health` to check Coinbase, Bitstamp, and Kraken BTC/USD minute candles without a wallet or transaction. New crypto markets commit an all-three health policy; the resolver blocks signing on missing/stale data or more than 1% spread. Cached settlement evidence is revalidated against its source archive and the contract normalization. Existing markets retain their committed rules. Run `npm run test:oracle` and see [docs/oracle-health.md](docs/oracle-health.md) for limits and operation.
+New BTC direction markets compare one Chainlink BTC/USD feed across a five-minute window and settle Up or Down. Trading closes before the observation window starts; ties resolve Up. Forecast receipts retain Gaussian payouts. See [the direction-market workflow](docs/btc-five-minute.md) for local E2E and live signing commands. Run `npm run oracle:health` for a wallet-free feed check. Arc testnet markets read the live Arc mainnet Chainlink feed through the trusted resolver, with source and settlement chains committed separately; no native testnet feed or verified cross-chain relay is claimed. Existing Coinbase markets keep their immutable exchange policies. The resolver validates historical Chainlink rounds and archived evidence before signing; the contract still trusts the resolver wallet. Run `npm run test:oracle` and see [docs/oracle-health.md](docs/oracle-health.md) for feed configuration and limits.
 
 Football sources are wired separately: run `npm run oracle:football` for readiness, then configure the three server-side provider keys and exact fixture mappings described in [docs/football-oracles.md](docs/football-oracles.md). New football markets require exact full-time score agreement across all three providers. Existing football markets retain their original official-source rules.
 

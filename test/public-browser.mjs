@@ -7,13 +7,15 @@ const browser = await chromium.launch({ headless: true, executablePath: chromium
 const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
 const errors = []; page.on('pageerror', error => errors.push(error.message));
 try {
-  await page.goto(process.env.DASS_BROWSER_URL ?? 'http://127.0.0.1:5173/');
+  const appURL = new URL(process.env.DASS_BROWSER_URL ?? 'http://127.0.0.1:5173/');
+  appURL.searchParams.set('view', 'markets');
+  await page.goto(appURL.href);
   await expect(page.getByRole('button', { name: /Everton vs Chelsea/ })).toBeVisible({ timeout: 45000 });
   await expect(page.getByRole('button', { name: /Coventry City vs Newcastle/ })).toBeVisible();
   await expect(page.getByRole('button', { name: /BTC\/USD close/ })).toBeVisible();
   await expect(page.getByRole('button', { name: /expiry recovery test/ })).toBeVisible();
-  await expect(page).toHaveTitle('DAZZ Markets · Arc');
-  await expect(page.getByRole('button', { name: 'DAZZ Markets home', exact: true })).toBeVisible();
+  await expect(page).toHaveTitle('dass · Arc');
+  await expect(page.getByRole('link', { name: 'Dass home', exact: true })).toBeVisible();
   await page.getByRole('button', { name: /^Sports/ }).click();
   await expect(page.getByRole('button', { name: /Everton vs Chelsea/ })).toBeVisible();
   await expect(page.getByRole('button', { name: /BTC\/USD close/ })).toHaveCount(0);
@@ -53,14 +55,14 @@ try {
   await page.getByRole('button', { name: 'Markets', exact: true }).click();
   await expect(page.getByRole('button', { name: /Everton vs Chelsea/ })).toBeVisible();
   assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth), 'No horizontal overflow in mobile discovery');
-  await page.screenshot({ path: '../outputs/DAZZ-Markets-mobile.png', fullPage: true });
+  await page.screenshot({ path: '../outputs/dass-markets-mobile.png', fullPage: true });
   await page.setViewportSize({ width: 1440, height: 1000 });
-  await page.screenshot({ path: '../outputs/DAZZ-Markets-desktop.png', fullPage: true });
+  await page.screenshot({ path: '../outputs/dass-markets-desktop.png', fullPage: true });
   await page.setViewportSize({ width: 390, height: 844 });
   await page.getByRole('button', { name: 'My positions', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Connect wallet' }).last()).toBeVisible();
   await page.screenshot({ path: 'work/public-testnet-mobile.png', fullPage: true });
   assert.deepEqual(errors, []);
-  fs.writeFileSync('deployments/arc-testnet-browser-evidence.json', JSON.stringify({ checkedAt: new Date().toISOString(), chainId: manifest.chainId, contract: manifest.address, productionBuild: process.env.DASS_BROWSER_PRODUCTION === 'true', checks: ['DAZZ Markets branding', 'Category/status filtering and keyword search with empty-state recovery', 'Mobile market discovery without overflow', 'Actual public RPC market discovery', 'Three real-event markets plus explicit expiry recovery exercise', 'Self-contained committed rules verified', 'Official source link', 'Two confirmed forecast event transaction links', 'Resolved and cancelled market escrow fully paid', 'Injected-wallet connection required', 'No disposable demo wallet', 'No inherited local transaction history', '390px layout without overflow', 'Zero browser page errors'], passed: true }, null, 2) + '\n');
+  fs.writeFileSync('deployments/arc-testnet-browser-evidence.json', JSON.stringify({ checkedAt: new Date().toISOString(), chainId: manifest.chainId, contract: manifest.address, productionBuild: process.env.DASS_BROWSER_PRODUCTION === 'true', checks: ['Dass branding', 'Category/status filtering and keyword search with empty-state recovery', 'Mobile market discovery without overflow', 'Actual public RPC market discovery', 'Three real-event markets plus explicit expiry recovery exercise', 'Self-contained committed rules verified', 'Official source link', 'Two confirmed forecast event transaction links', 'Resolved and cancelled market escrow fully paid', 'Injected-wallet connection required', 'No disposable demo wallet', 'No inherited local transaction history', '390px layout without overflow', 'Zero browser page errors'], passed: true }, null, 2) + '\n');
   console.log('Public Arc Testnet browser checks passed. No wallet was faked and no browser signing key was provided.');
 } finally { await browser.close(); }

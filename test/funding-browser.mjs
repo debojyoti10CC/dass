@@ -27,7 +27,9 @@ try {
     };
     window.__changeFundingAccount = next => { window.__fundingAccount = next; handlers.get('accountsChanged')?.(next ? [next] : []); };
   }, { account: wallets['trader-a'], chainId: manifest.chainId });
-  await page.goto(process.env.DASS_BROWSER_URL ?? 'http://127.0.0.1:5180/');
+  const appURL = new URL(process.env.DASS_BROWSER_URL ?? 'http://127.0.0.1:5180/');
+  appURL.searchParams.set('view', 'markets');
+  await page.goto(appURL.href);
   const trigger = page.getByRole('button', { name: 'Fund test wallet', exact: true });
   await trigger.click();
   const panel = page.getByRole('dialog', { name: 'Fund your test wallet.' });

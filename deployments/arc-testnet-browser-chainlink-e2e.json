@@ -1,0 +1,70 @@
+{
+  "chainId": 5042002,
+  "operator": "0x7e8279CFE2c20C37EaD44a80517FdBb430ACA047",
+  "previousContract": "0xc613bca497257cfec8d1754e1d81136cb9862ca8",
+  "tokenAddress": "0x3600000000000000000000000000000000000000",
+  "transactions": [
+    {
+      "action": "Deploy browser-operator test contract",
+      "hash": "0x0c64f7f920fd9835e14daff2e93f4310fc4020c6995dd202cbaf873cbf5abcbd",
+      "blockNumber": "66475427",
+      "feeNativeRaw": "54487216500000000"
+    }
+  ],
+  "markets": [
+    {
+      "slug": "btc-chainlink-e2e-1791634761",
+      "closeAt": 1791634761,
+      "resolveBy": 1791638361,
+      "initialMeanWad": "82535390000000000000",
+      "rules": {
+        "question": "BTC/USD Chainlink · 2026-10-10T12:19:51.000Z · live testnet E2E",
+        "category": "Crypto",
+        "chainlink": {
+          "version": 1,
+          "type": "chainlink-btc-usd",
+          "chainId": 5042,
+          "settlementChainId": 5042002,
+          "address": "0xa109B535C70C8Be9995be64Bb6751AcDB27e03De",
+          "decimals": 8,
+          "maxAgeSeconds": 86400
+        },
+        "source": "https://explorer.arc.io/address/0xa109B535C70C8Be9995be64Bb6751AcDB27e03De",
+        "field": "latestRoundData().answer at the first source-chain block at or after observationAt, using the committed feed decimals.",
+        "observationAt": "2026-10-10T12:19:51.000Z",
+        "earliestRetrievalAt": "2026-10-10T12:19:51.000Z",
+        "publicationPolicy": "Use the first source-chain block at or after observationAt and verify its predecessor is earlier. Require a positive complete BTC/USD round, no future update and age within maxAgeSeconds. Re-read the archived block and round before signing. No exchange fallback or later-price substitution.",
+        "units": "USD / 1000",
+        "normalization": {
+          "origin": "0",
+          "scale": "1000"
+        },
+        "precision": "Chainlink feed decimals; normalized outcomeStep 0.000001 (0.001 USD).",
+        "rounding": "Normalize once; nearest step, exact halves away from zero.",
+        "missingData": "Unavailable historical state, invalid/stale feed or out-of-bounds outcome blocks resolution. Cancel at resolveBy for original-deposit refunds.",
+        "evidencePolicy": "Archive feed/chain identity, round fields and block number/hash/timestamp. Re-read onchain and recompute normalization before signing; commit canonical evidence keccak256.",
+        "resolverModel": "Trusted browser operator reads Chainlink on chain 5042, settles on chain 5042002. No verified cross-chain relay or native testnet feed is claimed.",
+        "initialForecastPolicy": "Sponsor forecast initialized at the live Chainlink price, not externally supplied odds."
+      },
+      "initialPriceSource": {
+        "chainId": 5042,
+        "address": "0xa109B535C70C8Be9995be64Bb6751AcDB27e03De",
+        "decimals": 8,
+        "description": "BTC / USD",
+        "blockNumber": "25239581",
+        "blockHash": "0x7c92dba80aad810619f47975715723c879e0d2ae69e4af8652f35d54f960cc99",
+        "blockTimestamp": "1791634461",
+        "round": [
+          "18446744073709553047",
+          "8253539000000",
+          "1791566108",
+          "1791566121",
+          "18446744073709553047"
+        ]
+      }
+    }
+  ],
+  "stage": "blocked: Request exceeds defined limit.\n\nURL: https://rpc.testnet.arc.io\nRequest body: {\"method\":\"eth_gasPrice\"}\n\nDetails: rate limit exceeded\nVersion: viem@2.57.4",
+  "contract": "0x8fac855f70d44a3ef5e93a724bfc6013b8f6a9af",
+  "deploymentTransaction": "0x0c64f7f920fd9835e14daff2e93f4310fc4020c6995dd202cbaf873cbf5abcbd"
+}

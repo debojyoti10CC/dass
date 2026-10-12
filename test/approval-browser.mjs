@@ -42,7 +42,9 @@ try {
     if (endpoint === manifest.rpcUrl) return route.fulfill({ contentType: 'application/json', body: JSON.stringify({ jsonrpc: '2.0', id: payload.id, error: { code: -32005, message: 'rate limit exceeded' } }) });
     return route.continue();
   });
-  await page.goto(process.env.DASS_BROWSER_URL ?? 'http://127.0.0.1:5180/');
+  const appURL = new URL(process.env.DASS_BROWSER_URL ?? 'http://127.0.0.1:5180/');
+  appURL.searchParams.set('view', 'markets');
+  await page.goto(appURL.href);
   await page.getByRole('button', { name: /Everton vs Chelsea/ }).click({ timeout: 60000 });
   await page.locator('#forecast-sigma').fill('6.9');
   await page.getByRole('button', { name: 'Review forecast' }).click();

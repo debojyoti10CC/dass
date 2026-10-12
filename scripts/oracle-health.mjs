@@ -1,6 +1,7 @@
 import { createHash } from 'node:crypto';
 import { parseUnits } from 'viem';
 import { canonical } from './public-runtime.mjs';
+import { validateBtcDirectionObservation, validateChainlinkObservation } from './chainlink-oracle.mjs';
 
 export const sha256 = bytes => createHash('sha256').update(bytes).digest('hex');
 const same = (a, b) => JSON.stringify(canonical(a)) === JSON.stringify(canonical(b));
@@ -86,17 +87,30 @@ export async function collectOracleHealth(policy, bucket, { fetchImpl = fetch, n
   catch (error) { return { healthy: false, reason: error.message, observations }; }
 }
 
-export async function validateSettlementEvidence({ evidence, sourceBytes, rules, market, manifest, marketId, normalize, nowMs = Date.now() }) {
+export async function validateSettlementEvidence({ evidence, sourceBytes, rules, market, manifest, marketId, normalize, client, nowMs = Date.now() }) {
   if (!evidence || typeof evidence !== 'object') throw new Error('Invalid evidence document.');
   const expected = { schemaVersion: 1, chainId: manifest.chainId, contract: manifest.address, marketId: String(marketId), rulesHash: market.rulesHash, resolver: market.resolver, sourceArchive: './source.json' };
   for (const [field, value] of Object.entries(expected)) requireEqual(evidence[field], value, field);
   for (const field of ['source', 'field', 'observationAt', 'publicationPolicy', 'units', 'precision', 'rounding', 'normalization']) requireEqual(evidence[field], rules[field], field);
   requireEqual(evidence.sourceSha256, sha256(sourceBytes), 'sourceSha256');
-  const candle = readCandle('coinbase', sourceBytes, rules.bucketStart);
+  if (rules.kind === 'btc-five-minute-direction') {
+    for (const field of ['kind', 'windowStart', 'windowEnd', 'earliestRetrievalAt', 'tiePolicy', 'binaryOutcomes']) requireEqual(evidence[field], rules[field], field);
+    const outcome = await validateBtcDirectionObservation(client, rules, sourceBytes, manifest, market);
+    requireEqual(evidence.rawValue, outcome.toString(), 'rawValue');
+    requireEqual(evidence.originalObservation, Buffer.from(sourceBytes).toString('utf8'), 'originalObservation');
+    const publication = Date.parse(evidence.publicationAt), earliest = Date.parse(rules.earliestRetrievalAt);
+    const source = JSON.parse(Buffer.from(sourceBytes).toString('utf8'));
+    const latestSample = Math.max(Number(source.start.blockTimestamp), Number(source.end.blockTimestamp)) * 1000;
+    if (!Number.isFinite(publication) || publication < earliest || publication < latestSample || publication >= Number(market.resolveBy) * 1000 || publication > nowMs) throw new Error('Evidence retrieval outside the admissible window.');
+    const normalized = await normalize(parseUnits(outcome.toString(), 18));
+    requireEqual(evidence.normalizedOutcome, normalized.toString(), 'normalizedOutcome');
+    return normalized;
+  }
+  const candle = rules.chainlink ? await validateChainlinkObservation(client, rules, sourceBytes, manifest, market) : readCandle('coinbase', sourceBytes, rules.bucketStart);
   requireEqual(evidence.rawValue, candle.rawValue, 'rawValue');
   requireEqual(evidence.originalObservation, candle.originalObservation, 'originalObservation');
   const publication = Date.parse(evidence.publicationAt), earliest = Date.parse(rules.earliestRetrievalAt);
-  if (!Number.isFinite(publication) || !Number.isFinite(earliest) || earliest < (rules.bucketStart + 60) * 1000 || publication < earliest || publication >= Number(market.resolveBy) * 1000) throw new Error('Evidence retrieval outside the admissible window.');
+  if (!Number.isFinite(publication) || !Number.isFinite(earliest) || (!rules.chainlink && earliest < (rules.bucketStart + 60) * 1000) || publication < earliest || publication >= Number(market.resolveBy) * 1000 || (rules.chainlink && publication < Number(candle.snapshot.blockTimestamp) * 1000)) throw new Error('Evidence retrieval outside the admissible window.');
   const normalized = await normalize(parseUnits(candle.rawValue, 18));
   requireEqual(evidence.normalizedOutcome, normalized.toString(), 'normalizedOutcome');
   if (publication > nowMs) throw new Error('Evidence retrieval is in the future.');

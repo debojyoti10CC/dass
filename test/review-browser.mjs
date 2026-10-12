@@ -27,7 +27,9 @@ try {
       throw new Error('The regression wallet cannot sign or broadcast');
     } };
   }, { account: acceptance.wallets['trader-a'], chainId: manifest.chainId });
-  await page.goto(process.env.DASS_BROWSER_URL ?? 'http://127.0.0.1:5180/');
+  const appURL = new URL(process.env.DASS_BROWSER_URL ?? 'http://127.0.0.1:5180/');
+  appURL.searchParams.set('view', 'markets');
+  await page.goto(appURL.href);
   await page.getByRole('button', { name: /Everton vs Chelsea/ }).click({ timeout: 60000 });
   await expect(page.getByText('Rules verified', { exact: true })).toBeVisible();
   await page.locator('#forecast-mean').fill('3.1');

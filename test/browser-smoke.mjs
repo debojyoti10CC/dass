@@ -13,7 +13,7 @@ const pageErrors = [];
 page.on('pageerror', error => pageErrors.push(error.message));
 
 try {
-  await page.goto('http://127.0.0.1:5173', { waitUntil: 'networkidle' });
+  await page.goto('http://127.0.0.1:5173/?view=markets', { waitUntil: 'networkidle' });
   await page.getByRole('heading', { name: 'Explore markets', exact: true }).waitFor();
   await expect(page.locator('.market-results')).toContainText(/^2 markets/, { timeout: 15_000 });
   await page.getByRole('button', { name: /Local demo: what temperature/ }).click();
@@ -55,7 +55,7 @@ try {
   await page.setViewportSize({ width: 390, height: 844 });
   const width = await page.evaluate(() => ({ viewport: window.innerWidth, document: document.documentElement.scrollWidth }));
   assert.ok(width.document <= width.viewport + 1, `mobile layout overflows horizontally: ${JSON.stringify(width)}`);
-  await page.goto('http://127.0.0.1:5173', { waitUntil: 'domcontentloaded' });
+  await page.goto('http://127.0.0.1:5173/?view=markets', { waitUntil: 'domcontentloaded' });
   await page.getByRole('heading', { name: 'Explore markets', exact: true }).waitFor();
   await page.keyboard.press('Tab');
   await page.waitForFunction(() => document.activeElement?.classList.contains('skip-link'));

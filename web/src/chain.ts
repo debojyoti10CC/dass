@@ -136,7 +136,7 @@ export async function readSponsoredMarkets(account: Address, blockNumber: bigint
 export async function readForecastEvents(marketId: bigint) {
   const blockNumber = await publicClient.getBlockNumber()
   const logs = await eventLogs('CurveChanged', blockNumber, { marketId })
-  return logs.filter(log => integer(log.args.marketId, 'marketId') === marketId).slice(-20).reverse().map(log => ({ hash: log.transactionHash, owner: log.args.owner as Address, receiptId: integer(log.args.receiptId, 'receiptId'), deposit: integer(log.args.deposit, 'deposit') }))
+  return logs.filter(log => integer(log.args.marketId, 'marketId') === marketId).slice(-20).reverse().map(log => ({ hash: log.transactionHash, owner: log.args.owner as Address, receiptId: integer(log.args.receiptId, 'receiptId'), deposit: integer(log.args.deposit, 'deposit'), newMean: integer(log.args.newMean, 'newMean') }))
 }
 export async function readPositions(account: Address, blockNumber: bigint): Promise<Position[]> {
   const [logs, claims] = await Promise.all([eventLogs('CurveChanged', blockNumber, { owner: account }), eventLogs('PositionClaimed', blockNumber, { owner: account })])

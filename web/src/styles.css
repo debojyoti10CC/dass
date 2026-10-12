@@ -24,8 +24,9 @@ code { font-size: 14px; overflow-wrap: anywhere; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
 .topbar { border-bottom: 1px solid var(--hairline); background: #fff; }
 .nav-shell { max-width: 1360px; margin: auto; min-height: 80px; padding: 16px 40px; display: flex; align-items: center; gap: 48px; }
-.wordmark { display: flex; align-items: center; gap: 10px; background: none; padding: 0; font-size: 23px; letter-spacing: -.7px; font-weight: 650; white-space: nowrap; }
-.brand-symbol { width: 36px; height: 36px; color: var(--blue); flex-shrink: 0; }
+.wordmark { color: var(--ink); text-decoration: none; display: flex; align-items: flex-end; gap: 6px; background: none; padding: 0; font-size: 23px; letter-spacing: -.7px; font-weight: 650; white-space: nowrap; }
+.wordmark:hover { text-decoration: none; }
+.brand-symbol { width: 48px; height: 28px; color: var(--blue); flex-shrink: 0; }
 .wordmark-secondary { font-weight: 400; }
 nav { display: flex; gap: 28px; align-self: stretch; align-items: center; }
 nav button { position: relative; padding: 10px 0; background: transparent; font-size: 14px; color: var(--body); font-weight: 600; white-space: nowrap; }
@@ -294,7 +295,7 @@ footer { max-width: 1280px; margin: 0 auto; padding: 40px; display: flex; gap: 4
 footer > div { display: grid; gap: 12px; min-width: 270px; }
 footer strong { font-size: 24px; font-weight: 600; color: var(--ink); letter-spacing: -.8px; }
 .footer-brand { display: flex; align-items: center; gap: 10px; }
-.footer-brand .brand-symbol { width: 30px; height: 30px; }
+.footer-brand .brand-symbol { width: 40px; height: 24px; }
 footer span { font-size: 12px; }
 footer p { font-size: 12px; max-width: 450px; margin-bottom: 0; }
 footer a { margin-left: auto; font-size: 12px; white-space: nowrap; }
@@ -315,7 +316,7 @@ footer a { margin-left: auto; font-size: 12px; white-space: nowrap; }
   .forecast-grid { grid-template-columns: 1fr; } .editor { position: static; padding: 28px; } .editor > .muted br { display: none; }
   .editor .control { display: inline-block; width: calc(50% - 14px); vertical-align: top; } .editor .control + .control { margin-left: 24px; } .editor-facts dd { max-width: none; }
   .scenario-readout { grid-template-columns: 1fr 1fr 1.2fr; } .scenario-readout label { grid-row: auto; } .operator-grid { grid-template-columns: 1fr; gap: 24px; }
-  .rules-grid, .rules-document { gap: 24px; } .nav-shell .wordmark { font-size: 21px; } .brand-symbol { width: 32px; height: 32px; }
+  .rules-grid, .rules-document { gap: 24px; } .nav-shell .wordmark { font-size: 21px; } .brand-symbol { width: 48px; height: 28px; }
   .discovery-hero { grid-template-columns: 1fr 1fr; gap: 24px; padding: 40px 0; } .hero-copy h1 { font-size: 42px; letter-spacing: -1.3px; } .hero-copy .intro { font-size: 14px; } .hero-visual { padding: 20px 20px 0; } .visual-terms strong { font-size: 15px; } .hero-caption { gap: 10px; font-size: 10px; }
   .hero-actions { gap: 16px; } .hero-actions .primary { padding: 12px 18px; font-size: 12px; } .hero-actions .text-button { font-size: 12px; } .market-overview > div { padding-left: 18px; } .market-overview dd { font-size: 23px; } .market-overview dt { font-size: 14px; }
   .category-tabs { width: 100%; justify-content: flex-start; } .market-search { margin-left: 0; flex: 1; width: auto; } .market-results > span { font-size: 10px; }
@@ -325,7 +326,7 @@ footer a { margin-left: auto; font-size: 12px; white-space: nowrap; }
 }
 @media (max-width: 540px) {
   .wallet-controls { width: 100%; justify-content: space-between; margin: 12px 0 0; } .fund-wallet-button { font-size: 12px; } .funding-dialog { padding: 24px; }
-  main { padding: 0 16px 40px; } .nav-shell { padding: 16px 16px 0; } .nav-shell .wordmark { font-size: 18px; gap: 8px; } .wallet-button { font-size: 12px; padding: 12px 14px; }
+  main { padding: 0 16px 40px; } .nav-shell { padding: 16px 16px 0; } .nav-shell .wordmark { font-size: 18px; gap: 5px; } .brand-symbol { width: 40px; height: 24px; } .wallet-button { font-size: 12px; padding: 12px 14px; }
   .discovery-hero { grid-template-columns: 1fr; gap: 32px; } .hero-copy h1 { font-size: 44px; } .hero-copy .intro { font-size: 15px; max-width: 340px; } .hero-actions .primary { padding: 13px 22px; font-size: 14px; } .hero-visual { display: none; }
   .market-grid { grid-template-columns: 1fr; gap: 16px; } .market-card { padding: 22px; } .market-card-title { min-height: 0; } .market-preview { margin-top: 12px; } .market-card-forecast strong { font-size: 25px; }
   .market-overview { grid-template-columns: 1fr 1fr; gap: 24px 0; } .market-overview > div:nth-child(3) { border-left: 0; padding-left: 0; } .market-overview dt { font-size: 14px; } .market-overview dd { font-size: 24px; }
@@ -342,3 +343,16 @@ footer a { margin-left: auto; font-size: 12px; white-space: nowrap; }
   .message { display: block; padding: 16px 20px; } .message .secondary { margin-top: 16px; } .market-context { gap: 12px; font-size: 12px; } footer { padding: 32px 20px; }
 }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
+
+.direction-market { align-self: stretch; min-height: 360px; }
+.direction-market > p:not(.eyebrow):not(.fine-print) { max-width: 520px; color: var(--body); line-height: 1.6; }
+.direction-choices { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 28px 0; }
+.direction-choice { display: grid; justify-items: start; gap: 8px; min-height: 145px; padding: 18px; border: 1px solid var(--hairline); background: var(--soft); color: var(--ink); text-align: left; }
+.direction-choice > span { font-size: 23px; }
+.direction-choice strong { font-size: 24px; }
+.direction-choice small, .direction-current small { color: var(--body); }
+.direction-choice.selected { border-color: var(--blue); box-shadow: inset 0 0 0 1px var(--blue); }
+.direction-current { display: grid; gap: 8px; margin: 24px 0; padding: 18px; background: var(--soft); }
+.direction-current span { color: var(--body); font-size: 12px; }
+.direction-current strong { font-size: 24px; }
+@media (max-width: 600px) { .direction-choices { gap: 8px; } .direction-choice { min-height: 126px; padding: 12px; } }
